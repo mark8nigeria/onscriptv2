@@ -14,9 +14,9 @@ import Link from "next/link";
 
 export default async function Dashboard() {
   const session = await auth();
-  if (!session) redirect("/login");
+  if (!session || !session.user || !session.user.id) redirect("/login");
 
-  const { name, image } = session.user;
+  const { name, image, id } = session.user;
 
   // const mockUserData = {
   //   address: "0x3097139c11366006F73Fd357c1F2489d8CF3B96A",
@@ -57,9 +57,9 @@ export default async function Dashboard() {
         </div>
       </section>
 
-      <ScheduleCastNow profilePic={image} username={name} />
+      <ScheduleCastNow profilePic={image} username={name} userId={id} />
 
-      <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col shadow-xl shadow-black/[0.05]">
+      {/* <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col shadow-xl shadow-black/[0.05]">
         <h3 className="font-medium text-xl capitalize text-left w-full p-4 pb-0">
           Scheduled casts
         </h3>
@@ -79,7 +79,7 @@ export default async function Dashboard() {
             </ButtonAction>
           </Link>
         </div>
-      </section>
+      </section> */}
     </main>
   );
 }

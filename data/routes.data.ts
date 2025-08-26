@@ -1,6 +1,11 @@
 export const authRoutes = ["/login"];
 
-export const publicRoutes = ["/", "/api/user", "/.well-known/farcaster.json"];
+export const publicRoutes = [
+  "/",
+  "/api/user",
+  "/.well-known/farcaster.json",
+  "/api/cast/publish/qstash",
+];
 
 export const apiAuthPrefix = "/api/auth";
 

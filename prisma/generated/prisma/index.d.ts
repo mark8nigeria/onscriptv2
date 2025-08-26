@@ -2311,7 +2311,7 @@ export namespace Prisma {
   export type PostGroupByOutputType = {
     id: string
     signerUuid: string
-    text: string | null
+    text: string
     parent: string | null
     channelId: string | null
     parentAuthorFid: number | null
@@ -2439,7 +2439,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       signerUuid: string
-      text: string | null
+      text: string
       parent: string | null
       channelId: string | null
       parentAuthorFid: number | null
@@ -16182,7 +16182,7 @@ export namespace Prisma {
     NOT?: PostWhereInput | PostWhereInput[]
     id?: StringFilter<"Post"> | string
     signerUuid?: StringFilter<"Post"> | string
-    text?: StringNullableFilter<"Post"> | string | null
+    text?: StringFilter<"Post"> | string
     parent?: StringNullableFilter<"Post"> | string | null
     channelId?: StringNullableFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableFilter<"Post"> | number | null
@@ -16201,7 +16201,7 @@ export namespace Prisma {
   export type PostOrderByWithRelationInput = {
     id?: SortOrder
     signerUuid?: SortOrder
-    text?: SortOrderInput | SortOrder
+    text?: SortOrder
     parent?: SortOrderInput | SortOrder
     channelId?: SortOrderInput | SortOrder
     parentAuthorFid?: SortOrderInput | SortOrder
@@ -16225,7 +16225,7 @@ export namespace Prisma {
     OR?: PostWhereInput[]
     NOT?: PostWhereInput | PostWhereInput[]
     signerUuid?: StringFilter<"Post"> | string
-    text?: StringNullableFilter<"Post"> | string | null
+    text?: StringFilter<"Post"> | string
     parent?: StringNullableFilter<"Post"> | string | null
     channelId?: StringNullableFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableFilter<"Post"> | number | null
@@ -16242,7 +16242,7 @@ export namespace Prisma {
   export type PostOrderByWithAggregationInput = {
     id?: SortOrder
     signerUuid?: SortOrder
-    text?: SortOrderInput | SortOrder
+    text?: SortOrder
     parent?: SortOrderInput | SortOrder
     channelId?: SortOrderInput | SortOrder
     parentAuthorFid?: SortOrderInput | SortOrder
@@ -16268,7 +16268,7 @@ export namespace Prisma {
     NOT?: PostScalarWhereWithAggregatesInput | PostScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Post"> | string
     signerUuid?: StringWithAggregatesFilter<"Post"> | string
-    text?: StringNullableWithAggregatesFilter<"Post"> | string | null
+    text?: StringWithAggregatesFilter<"Post"> | string
     parent?: StringNullableWithAggregatesFilter<"Post"> | string | null
     channelId?: StringNullableWithAggregatesFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableWithAggregatesFilter<"Post"> | number | null
@@ -17338,7 +17338,7 @@ export namespace Prisma {
   export type PostCreateInput = {
     id?: string
     signerUuid: string
-    text?: string | null
+    text: string
     parent?: string | null
     channelId?: string | null
     parentAuthorFid?: number | null
@@ -17356,7 +17356,7 @@ export namespace Prisma {
   export type PostUncheckedCreateInput = {
     id?: string
     signerUuid: string
-    text?: string | null
+    text: string
     parent?: string | null
     channelId?: string | null
     parentAuthorFid?: number | null
@@ -17374,7 +17374,7 @@ export namespace Prisma {
   export type PostUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     signerUuid?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: StringFieldUpdateOperationsInput | string
     parent?: NullableStringFieldUpdateOperationsInput | string | null
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
@@ -17392,7 +17392,7 @@ export namespace Prisma {
   export type PostUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     signerUuid?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: StringFieldUpdateOperationsInput | string
     parent?: NullableStringFieldUpdateOperationsInput | string | null
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
@@ -17410,7 +17410,7 @@ export namespace Prisma {
   export type PostCreateManyInput = {
     id?: string
     signerUuid: string
-    text?: string | null
+    text: string
     parent?: string | null
     channelId?: string | null
     parentAuthorFid?: number | null
@@ -17428,7 +17428,7 @@ export namespace Prisma {
   export type PostUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     signerUuid?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: StringFieldUpdateOperationsInput | string
     parent?: NullableStringFieldUpdateOperationsInput | string | null
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
@@ -17445,7 +17445,7 @@ export namespace Prisma {
   export type PostUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     signerUuid?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: StringFieldUpdateOperationsInput | string
     parent?: NullableStringFieldUpdateOperationsInput | string | null
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21342,7 +21342,7 @@ export namespace Prisma {
   export type PostCreateWithoutUserInput = {
     id?: string
     signerUuid: string
-    text?: string | null
+    text: string
     parent?: string | null
     channelId?: string | null
     parentAuthorFid?: number | null
@@ -21359,7 +21359,7 @@ export namespace Prisma {
   export type PostUncheckedCreateWithoutUserInput = {
     id?: string
     signerUuid: string
-    text?: string | null
+    text: string
     parent?: string | null
     channelId?: string | null
     parentAuthorFid?: number | null
@@ -21733,7 +21733,7 @@ export namespace Prisma {
     NOT?: PostScalarWhereInput | PostScalarWhereInput[]
     id?: StringFilter<"Post"> | string
     signerUuid?: StringFilter<"Post"> | string
-    text?: StringNullableFilter<"Post"> | string | null
+    text?: StringFilter<"Post"> | string
     parent?: StringNullableFilter<"Post"> | string | null
     channelId?: StringNullableFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableFilter<"Post"> | number | null
@@ -23951,7 +23951,7 @@ export namespace Prisma {
   export type PostCreateManyUserInput = {
     id?: string
     signerUuid: string
-    text?: string | null
+    text: string
     parent?: string | null
     channelId?: string | null
     parentAuthorFid?: number | null
@@ -24088,7 +24088,7 @@ export namespace Prisma {
   export type PostUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     signerUuid?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: StringFieldUpdateOperationsInput | string
     parent?: NullableStringFieldUpdateOperationsInput | string | null
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
@@ -24105,7 +24105,7 @@ export namespace Prisma {
   export type PostUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     signerUuid?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: StringFieldUpdateOperationsInput | string
     parent?: NullableStringFieldUpdateOperationsInput | string | null
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
@@ -24122,7 +24122,7 @@ export namespace Prisma {
   export type PostUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     signerUuid?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: StringFieldUpdateOperationsInput | string
     parent?: NullableStringFieldUpdateOperationsInput | string | null
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null

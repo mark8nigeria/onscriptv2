@@ -1,5 +1,5 @@
 import cinemaImg from "@/assets/imgs/cinematic-streak.jpg";
-const baseDate = new Date("2025-08-16T12:00:00");
+const baseDate = new Date("2025-08-26T12:00:00");
 
 export type Campaign = {
   id: number;

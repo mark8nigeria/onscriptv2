@@ -88,3 +88,6 @@ body {
 button {
   @apply outline-none ring-0;
 }
+button:disabled {
+  @apply pointer-events-none opacity-80 cursor-not-allowed;
+}

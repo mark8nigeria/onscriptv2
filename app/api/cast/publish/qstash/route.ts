@@ -1,8 +1,7 @@
-// app/api/cast/publish/qstash/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import { Receiver } from "@upstash/qstash";
 import { PostSchema } from "@/features/cast/schemas/cast.schema";
-import { getPostByQstashMessageId } from "@/helpers/read-db";
+import { getPostById } from "@/helpers/read-db";
 import db from "@/lib/db";
 
 const receiver = new Receiver({
@@ -40,40 +39,63 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Variables not set" }, { status: 400 });
     }
 
-    const { qstashMessageId } = parsedData.data;
+    const { id } = parsedData.data;
 
-    if (!qstashMessageId) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    if (!id) {
+      return NextResponse.json({ error: "ID not found" }, { status: 400 });
     }
 
-    const post = await getPostByQstashMessageId(qstashMessageId);
-
+    const post = await getPostById(id);
     if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Scheduled post not found" },
+        { status: 404 },
+      );
     }
-    if (post.status === "PUBLISHED" || post.postHash) {
+
+    const {
+      qstashMessageId,
+      status,
+      postHash,
+      // text,
+      // embeds,
+      // signerUuid,
+      // parent,
+      // channelId,
+      // parentAuthorFid,
+    } = post;
+
+    if (status === "PUBLISHED" || postHash) {
       return NextResponse.json(
         { error: "Post have already been published" },
         { status: 400 },
       );
     }
 
-    const { text, embeds, signerUuid, parent, channelId } = post;
-
+    if (!qstashMessageId) {
+      return NextResponse.json(
+        { error: "Qstash Message not found" },
+        { status: 404 },
+      );
+    }
+    /**
     const url = `${NEYNAR_API_URL}/v2/farcaster/cast/`;
+    const postBody = {
+      signer_uuid: signerUuid,
+      text,
+      parent_author_fid: parentAuthorFid,
+      embeds,
+      parent: parent ?? undefined,
+      channel_id: channelId ?? undefined,
+    };
+
     const options = {
       method: "POST",
       headers: {
         "x-api-key": NEYNAR_API_KEY,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        signer_uuid: signerUuid,
-        text,
-        embeds,
-        parent,
-        channel_id: channelId,
-      }),
+      body: JSON.stringify(postBody),
     };
 
     const res = await fetch(url, options);
@@ -86,13 +108,15 @@ export async function POST(req: NextRequest) {
     const {
       cast: { hash },
     } = await res.json();
+      */
 
     const updatedData = await db.post.update({
       where: {
         qstashMessageId,
       },
       data: {
-        postHash: hash,
+        // postHash: hash,
+        postHash: Math.random().toString(36).substring(2, 15),
         status: "PUBLISHED",
         publishedAt: new Date(),
       },

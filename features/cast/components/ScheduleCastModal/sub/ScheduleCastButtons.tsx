@@ -1,14 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import ButtonAction from "@/components/ButtonAction";
 import { PathDisplayed } from "@/features/cast/utils/useCastModal";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { DateTimePicker } from "@/components/DateTimePicker";
 
 export default function ScheduleCastButtons({
   isLoading,
@@ -16,21 +10,19 @@ export default function ScheduleCastButtons({
   setPathDisplayed,
   setIsModalOpen,
   parseCast,
-  handlePublish,
   text,
+  setIsSetPublishTimeOpen,
 }: {
   isLoading: boolean;
   pathDisplayed: PathDisplayed;
   setPathDisplayed: React.Dispatch<React.SetStateAction<PathDisplayed>>;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   parseCast: (text: string) => Promise<void>;
-  handlePublish: () => Promise<void>;
   text: string;
+  setIsSetPublishTimeOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [isSetPublishTimeOpen, setIsSetPublishTimeOpen] = useState(false);
   return (
     <>
-      {" "}
       <div className="w-full flex items-center justify-center gap-2">
         <ButtonAction
           onClick={() => setIsModalOpen(false)}
@@ -42,12 +34,10 @@ export default function ScheduleCastButtons({
         <ButtonAction
           disabled={isLoading}
           onClick={() => {
+            parseCast(text);
             if (pathDisplayed === "create-cast") {
               setPathDisplayed("preview-cast");
-              parseCast(text);
             } else {
-              handlePublish();
-              // setIsModalOpen(false);
               setIsSetPublishTimeOpen(true);
             }
           }}
@@ -58,14 +48,9 @@ export default function ScheduleCastButtons({
             ? "loading"
             : pathDisplayed === "create-cast"
               ? "Preview cast"
-              : "Schedule cast"}
+              : "Set publish time"}
         </ButtonAction>
       </div>
-      {isSetPublishTimeOpen && (
-        <div className="fixed top-0 left-0 w-full h-full z-[1000] bg-black/40 p-4 backdrop-blur-sm">
-          <DateTimePicker />
-        </div>
-      )}
     </>
   );
 }

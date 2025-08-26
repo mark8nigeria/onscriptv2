@@ -1,11 +1,14 @@
 import { auth } from "@/auth";
 import { PostSchemaDataType } from "@/features/cast/schemas/cast.schema";
 import { scheduleCastPostSchema } from "@/features/cast/schemas/scheduleCastPost.schema";
+import { getUserById } from "@/helpers/read-db";
 import db from "@/lib/db";
-import { qstashClient } from "@/lib/qstash";
+import { cancelQstashMessage, qstashClient } from "@/lib/qstash";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+  let messageId: string | null = null;
+
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.id) {
@@ -26,16 +29,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const {
-      files,
-      channelId,
-      embeds,
-      text,
-      scheduledAt,
-      signerUuid,
-      status,
-      userId,
-    } = parsedData.data;
+    const { files, channelId, embeds, text, scheduledAt, status, userId } =
+      parsedData.data;
+
+    if (new Date() > scheduledAt) {
+      return NextResponse.json(
+        { error: "Date cannot be in the past" },
+        { status: 400 },
+      );
+    }
 
     if (userId !== id) {
       return NextResponse.json(
@@ -44,13 +46,25 @@ export async function POST(request: Request) {
       );
     }
 
+    const user = await getUserById(userId);
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // if(!user?.signerUuid){
+    //   return NextResponse.json(
+    //     { error: "User does not have a signer" },
+    //     { status: 400 },
+    //   );
+    // }
+
     if (files.length > 0) {
       //Todo: store the images in pinata
       // embeds?.push({url:"sth"})
     }
 
     const postData: PostSchemaDataType = {
-      signerUuid,
+      signerUuid: user.signerUuid || "example-signer-uuid",
       status,
       text,
       userId,
@@ -59,25 +73,28 @@ export async function POST(request: Request) {
       scheduledAt,
     };
 
-    const data = await db.post.create({
-      data: postData,
-    });
+    await db.$transaction(async (tx) => {
+      const post = await tx.post.create({
+        data: { ...postData },
+      });
 
-    const res = await qstashClient.publishJSON({
-      body: data,
-      url: "http://localhost:3000/api/cast/publish/qstash",
-      notBefore: Math.floor(scheduledAt.getTime() / 1000),
-      retries: 3,
-    });
-    const { messageId } = res;
+      const res = await qstashClient.publishJSON({
+        body: post,
+        url: "http://localhost:3000/api/cast/publish/qstash",
+        notBefore: Math.floor(scheduledAt.getTime() / 1000),
+        retries: 3,
+      });
+      messageId = res.messageId;
+      if (!messageId) throw new Error("QStash publish failed");
 
-    await db.post.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        qstashMessageId: messageId,
-      },
+      await tx.post.update({
+        where: {
+          id: post.id,
+        },
+        data: {
+          qstashMessageId: messageId,
+        },
+      });
     });
 
     return NextResponse.json(
@@ -85,6 +102,15 @@ export async function POST(request: Request) {
       { status: 200 },
     );
   } catch (error) {
+    if (messageId) {
+      console.log("Canceling QStash message:", messageId);
+      try {
+        await cancelQstashMessage(messageId);
+      } catch (cleanupErr) {
+        console.log("Failed to cancel QStash message:", cleanupErr);
+      }
+    }
+
     console.log(error);
     return NextResponse.json(
       {

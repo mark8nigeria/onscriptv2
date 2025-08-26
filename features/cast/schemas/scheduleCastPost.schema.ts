@@ -21,11 +21,11 @@ const fileMetaSchema = z
 
 export const scheduleCastPostSchema = z.object({
   files: z.array(fileMetaSchema).default([]),
-  text: z.string().optional(),
+  text: z.string(),
   embeds: z.array(EmbedSchema).optional(),
   channelId: z.string().optional(),
   status: PostStatusSchema.default("DRAFT"),
   scheduledAt: z.coerce.date(),
-  signerUuid: z.string(),
+  // signerUuid: z.string(),
   userId: z.string(),
 });

@@ -24,7 +24,7 @@ model Post {
   id String @id @default(cuid())
 
   signerUuid      String
-  text            String?
+  text            String
   parent          String?
   channelId       String?
   parentAuthorFid Int?

@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`bg-neutral-100 ${fonts}`}>
         <Providers>
-          <Toaster />
+          <Toaster richColors theme="light" />
           <div className="max-w-xl mx-auto">
             <Navbar />
             {children}

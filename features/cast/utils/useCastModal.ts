@@ -3,6 +3,8 @@
 import { useCallback, useState } from "react";
 import useCastParserNeynar from "./useCasterParserNeynar";
 import { useByteLimitedText } from "./useBytesLimitedText";
+import { toast } from "sonner";
+import { PostStatusSchema } from "../schemas/cast.schema";
 
 export type PathDisplayed = "preview-cast" | "create-cast";
 const titles: Record<PathDisplayed, string> = {
@@ -12,6 +14,7 @@ const titles: Record<PathDisplayed, string> = {
 
 export default function useCastModal() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSetPublishTimeOpen, setIsSetPublishTimeOpen] = useState(false);
   const [pathDisplayed, setPathDisplayed] =
     useState<PathDisplayed>("create-cast");
   const [files, setFiles] = useState<File[]>([]);
@@ -23,12 +26,16 @@ export default function useCastModal() {
   const { handleChange, text } = useByteLimitedText();
   const [isLoading, setIsLoading] = useState(false);
 
-  const resetModal = (isOpen: boolean) => {
-    setIsModalOpen(isOpen);
-    parseCast("");
-    setPathDisplayed("create-cast");
-    if (isOpen) setFiles([]);
-  };
+  const resetModal = useCallback(
+    (isOpen: boolean) => {
+      setIsModalOpen(isOpen);
+      parseCast("");
+      setPathDisplayed("create-cast");
+      setIsSetPublishTimeOpen(false);
+      if (isOpen) setFiles([]);
+    },
+    [setIsModalOpen, parseCast, setPathDisplayed, setFiles], // dependencies
+  );
 
   const finalEmbed = [...castData.embeds, ...castImgs.map((url) => ({ url }))];
   const finalData = {
@@ -36,28 +43,51 @@ export default function useCastModal() {
     embeds: finalEmbed,
   };
 
-  const handlePublish = useCallback(async () => {
-    console.log("castData", castData);
+  const handleSchedulePublish = useCallback(
+    async (date: Date, userId: string) => {
+      if (new Date() > date) {
+        toast.error("Date cannot be in the past");
+        return;
+      }
 
-    // setIsLoading(true);
-    // const res = await fetch("/api/cast/publish", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(castData),
-    // });
+      setIsLoading(true);
+      //This is for instant publishing
+      // const res = await fetch("/api/cast/publish", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ ...castData, scheduledAt: date, userId }),
+      // });
 
-    // if (!res.ok) {
-    //   console.log("error", await res.json());
-    //   setIsLoading(false);
-    //   return;
-    // }
+      // This is for scheduling
+      const res = await fetch("/api/cast/schedule", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...castData,
+          scheduledAt: date,
+          userId,
+          status: PostStatusSchema.enum.SCHEDULED,
+        }),
+      });
 
-    // console.log("success", await res.json());
-    // setIsLoading(false);
-    // // resetModal(false);
-  }, [castData]);
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error((await data.error) || "Something went wrong");
+        setIsLoading(false);
+        return;
+      }
+
+      console.log("success", await res.json());
+      toast.success("Cast published successfully");
+      setIsLoading(false);
+      resetModal(false);
+    },
+    [castData, resetModal],
+  );
 
   return {
     isModalOpen,
@@ -75,9 +105,11 @@ export default function useCastModal() {
     handleChange,
     text,
     isLoading,
-    handlePublish,
+    handleSchedulePublish,
     setCastImgs,
     castImgs,
     finalData,
+    isSetPublishTimeOpen,
+    setIsSetPublishTimeOpen,
   };
 }

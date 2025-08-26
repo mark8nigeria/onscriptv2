@@ -4,12 +4,15 @@ import CastCard from "@/features/cast/components/CastCard";
 import ScheduleCastNow from "@/features/cast/components/ScheduleCastNow";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { getAllUsersCast } from "@/helpers/read-db";
 
 export default async function Casts() {
   const session = await auth();
-  if (!session) redirect("/login");
+  if (!session || !session.user || !session.user.id) redirect("/login");
 
-  const { name, image } = session.user;
+  const { name, image, id } = session.user;
+
+  const casts = await getAllUsersCast(id);
 
   // const mockUserData = {
   //   address: "0x3097139c11366006F73Fd357c1F2489d8CF3B96A",
@@ -32,7 +35,11 @@ export default async function Casts() {
         </h3>
 
         <div className="grid grid-cols-1 divide-y divide-neutral-100">
-          {scheduledCasts.map((cast, i) => {
+          {!casts && <p className="text-center p-4">Something went wrong</p>}
+          {casts?.length === 0 && (
+            <p className="text-center p-4">No scheduled casts</p>
+          )}
+          {casts?.map((cast, i) => {
             return (
               <CastCard key={i} {...cast} username={name} profilePic={image} />
             );

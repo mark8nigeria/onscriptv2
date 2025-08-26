@@ -24,21 +24,21 @@ export const PostSchema = z.object({
   userId: z.string(),
 
   signerUuid: z.string(),
-  text: z.string().optional(),
+  text: z.string(),
 
-  parent: z.string().optional(),
-  channelId: z.string().optional(),
-  parentAuthorFid: z.number().optional(),
+  parent: z.string().nullable().optional(),
+  channelId: z.string().nullable().optional(),
+  parentAuthorFid: z.number().nullable().optional(),
 
   embeds: z.array(EmbedSchema).optional(),
 
-  postHash: z.string().optional(),
+  postHash: z.string().nullable().optional(),
 
-  status: PostStatusSchema.default("DRAFT"),
+  status: PostStatusSchema,
   scheduledAt: z.coerce.date().optional(),
   publishedAt: z.coerce.date().optional(),
 
-  qstashMessageId: z.string().optional(),
+  qstashMessageId: z.string().nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),

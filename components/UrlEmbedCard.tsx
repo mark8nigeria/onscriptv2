@@ -103,7 +103,11 @@ export default function UrlEmbedCard({ url }: { url: string }) {
       return (
         <div className="w-full max-w-md rounded-2xl border bg-gray-50 shadow p-2">
           <p className="text-xs text-gray-500">Failed to load preview</p>
-          <a href={url} className="text-blue-600 underline text-xs">
+          <a
+            href={url}
+            target="_blank"
+            className="text-blue-600 underline text-xs"
+          >
             {url}
           </a>
         </div>
@@ -137,7 +141,7 @@ export default function UrlEmbedCard({ url }: { url: string }) {
 
   // fallback
   return (
-    <a href={url} className="text-blue-600 underline">
+    <a href={url} target="_blank" className="text-blue-600 underline">
       {url}
     </a>
   );

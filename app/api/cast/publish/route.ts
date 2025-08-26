@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { PostSchemaDataType } from "@/features/cast/schemas/cast.schema";
 import { scheduleCastPostSchema } from "@/features/cast/schemas/scheduleCastPost.schema";
+import { getUserById } from "@/helpers/read-db";
 import db from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -25,16 +26,29 @@ export async function POST(request: Request) {
       );
     }
 
-    const {
-      files,
-      channelId,
-      embeds,
-      text,
-      scheduledAt,
-      signerUuid,
-      status,
-      userId,
-    } = parsedData.data;
+    const { files, channelId, embeds, text, scheduledAt, status, userId } =
+      parsedData.data;
+
+    if (new Date() > scheduledAt) {
+      return NextResponse.json(
+        { error: "Date cannot be in the past" },
+        { status: 400 },
+      );
+    }
+
+    if (!text && !embeds) {
+      return NextResponse.json(
+        { error: "No text or embeds provided" },
+        { status: 400 },
+      );
+    }
+
+    if (text?.length === 0 && embeds?.length === 0) {
+      return NextResponse.json(
+        { error: "No text or embeds provided" },
+        { status: 400 },
+      );
+    }
 
     if (userId !== id) {
       return NextResponse.json(
@@ -43,13 +57,26 @@ export async function POST(request: Request) {
       );
     }
 
+    const user = await getUserById(id);
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // if (!user.signerUuid) {
+    //   return NextResponse.json(
+    //     { error: "User does not have a signer" },
+    //     { status: 400 },
+    //   );
+    // }
+
     if (files.length > 0) {
       //Todo: store the images in pinata
       // embeds?.push({url:"sth"})
     }
 
     const postData: PostSchemaDataType = {
-      signerUuid,
+      signerUuid: user.signerUuid || "example-signer-uuid",
       status,
       text,
       userId,
@@ -58,6 +85,7 @@ export async function POST(request: Request) {
       scheduledAt,
     };
 
+    /**
     const { NEYNAR_API_URL, NEYNAR_API_KEY } = process.env;
 
     if (!NEYNAR_API_URL || !NEYNAR_API_KEY) {
@@ -90,12 +118,12 @@ export async function POST(request: Request) {
     const {
       cast: { hash },
     } = await res.json();
+      */
 
     const data = await db.post.create({
       data: {
         ...postData,
-        postHash: hash,
-        status: "PUBLISHED",
+        postHash: Math.random().toString(36).substring(2, 15),
         publishedAt: new Date(),
       },
     });

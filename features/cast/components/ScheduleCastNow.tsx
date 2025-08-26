@@ -5,11 +5,13 @@ import ScheduleCastModal from "./ScheduleCastModal";
 type ScheduleCastNowProps = {
   profilePic?: string | null;
   username?: string | null;
+  userId: string;
 };
 
 export default function ScheduleCastNow({
   profilePic,
   username,
+  userId,
 }: ScheduleCastNowProps) {
   return (
     <div className="w-full bg-white p-8 rounded-3xl flex items-center justify-center gap-4 flex-col shadow-xl shadow-black/[0.05]">
@@ -23,7 +25,11 @@ export default function ScheduleCastNow({
         </p>
       </div>
 
-      <ScheduleCastModal profilePic={profilePic} username={username} />
+      <ScheduleCastModal
+        userId={userId}
+        profilePic={profilePic}
+        username={username}
+      />
     </div>
   );
 }
