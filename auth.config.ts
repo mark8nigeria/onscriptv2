@@ -42,7 +42,6 @@ export default {
           if (!user) return null;
 
           // return {
-          //   address,
           //   id: user.id,
           //   image: user.pfpUrl,
           //   name: user.username,

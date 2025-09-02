@@ -7,16 +7,19 @@ import { useAccount } from "wagmi";
 import { shortenAddress } from "@/utils";
 import ButtonAction from "@/components/ButtonAction";
 import { signOut } from "next-auth/react";
+import OnchainAccount from "./OnchainAccount";
 
 type AccountDetailsProps = {
   name?: string | null;
   image?: string | null;
   isPremium: boolean;
+  fid: number;
 };
 export default function AccountDetails({
   name,
   image,
   isPremium,
+  fid,
 }: AccountDetailsProps) {
   const { address } = useAccount();
 
@@ -36,6 +39,8 @@ export default function AccountDetails({
         </div>
         <h3 className="font-medium text-xl text-center w-full">@{name}</h3>
       </div>
+
+      <OnchainAccount fid={fid} />
 
       <div className="space-y-4 w-full">
         <div className="w-full flex items-center justify-start gap-2">
