@@ -16,3 +16,10 @@ export const navLinks = [
     href: "/account",
   },
 ];
+
+export const adminNavLinks = [
+  {
+    name: "Dashboard",
+    href: "/admin/dashboard",
+  },
+];

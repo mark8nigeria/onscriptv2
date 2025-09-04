@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { AccountDetails } from "@/features/account/components";
 import { getUserById } from "@/helpers/read-db";
+import Link from "next/link";
+import ButtonAction from "@/components/ButtonAction";
 
 export default async function AccountPage() {
   const session = await auth();
@@ -20,7 +22,7 @@ export default async function AccountPage() {
     );
   }
 
-  const { fid, isPremium, username, pfpUrl } = user;
+  const { fid, isPremium, username, pfpUrl, role } = user;
 
   // const mockUserData = {
   //   address: "0x3097139c11366006F73Fd357c1F2489d8CF3B96A",
@@ -43,7 +45,9 @@ export default async function AccountPage() {
         image={pfpUrl}
         isPremium={isPremium}
         fid={fid}
+        role={role}
       />
+
       {/* <RequestSignature id={id} /> */}
     </main>
   );

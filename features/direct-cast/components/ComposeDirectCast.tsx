@@ -34,7 +34,7 @@ export default function ComposeDirectCast() {
     }
 
     setIsLoading(true);
-    const res = await fetch("/api/direct-cast", {
+    const res = await fetch("/api/broadcast", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +59,11 @@ export default function ComposeDirectCast() {
   };
 
   return (
-    <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col shadow-xl shadow-black/[0.05] p-4">
+    <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col gap-4 shadow-xl shadow-black/[0.05] p-4">
+      <h3 className="font-medium text-xl capitalize text-left w-full">
+        Broadcast Direct Cast
+      </h3>
+
       <form onSubmit={handleSubmit} className="space-y-4 w-full">
         <TextArea
           placeholder="Enter your message"
