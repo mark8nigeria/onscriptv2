@@ -30,9 +30,17 @@ export const sendMailFromAppBatchSchema = z.object({
   html: z.string().optional(),
 });
 
+export const broadCastToCinematicStreakSchema = z.object({
+  subject: z.string(),
+  text: z.string(),
+});
+
 export type sendMailSchemaType = z.infer<typeof sendMailSchema>;
 export type sendMailBatchSchemaType = z.infer<typeof sendMailBatchSchema>;
 export type sendMailFromAppSchemaType = z.infer<typeof sendMailFromAppSchema>;
 export type sendMailFromAppBatchSchemaType = z.infer<
   typeof sendMailFromAppBatchSchema
+>;
+export type broadCastToCinematicStreakSchemaType = z.infer<
+  typeof broadCastToCinematicStreakSchema
 >;

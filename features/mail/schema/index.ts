@@ -7,6 +7,8 @@ import {
   sendMailFromAppSchemaType,
   sendMailFromAppBatchSchemaType,
   sendMailFromAppBatchSchema,
+  broadCastToCinematicStreakSchema,
+  broadCastToCinematicStreakSchemaType,
 } from "./sendMailSchema";
 
 export {
@@ -14,8 +16,10 @@ export {
   sendMailBatchSchema,
   sendMailFromAppSchema,
   sendMailFromAppBatchSchema,
+  broadCastToCinematicStreakSchema,
   type sendMailSchemaType,
   type sendMailBatchSchemaType,
   type sendMailFromAppSchemaType,
   type sendMailFromAppBatchSchemaType,
+  type broadCastToCinematicStreakSchemaType,
 };

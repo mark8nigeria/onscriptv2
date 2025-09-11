@@ -3,7 +3,7 @@
 import ButtonAction from "@/components/ButtonAction";
 import Loader from "@/components/Loader";
 import { onscriptUserManagementAbi } from "@/constants/abis";
-import { onscriptUserManagementAddressSepolia } from "@/constants/contractAddresses";
+import { onscriptUserManagementAddressMainnet } from "@/constants/contractAddresses";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAccount, useReadContract } from "wagmi";
@@ -17,7 +17,7 @@ export default function OnchainAccount({ fid }: OnchainAccountProps) {
   const [isUserDataOnChian, setIsUserDataOnChian] = useState(false);
   const { address } = useAccount();
   const { data, isLoading, isError } = useReadContract({
-    address: onscriptUserManagementAddressSepolia,
+    address: onscriptUserManagementAddressMainnet,
     abi: onscriptUserManagementAbi,
     functionName: "getUserFid",
     args: [address],
@@ -32,7 +32,7 @@ export default function OnchainAccount({ fid }: OnchainAccountProps) {
 
   const comeOnchain = () => {
     writeContract({
-      address: onscriptUserManagementAddressSepolia,
+      address: onscriptUserManagementAddressMainnet,
       abi: onscriptUserManagementAbi,
       functionName: "registerUser",
       args: [fid],

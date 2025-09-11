@@ -14,17 +14,12 @@ import {
 import { getUserById } from "@/helpers/read-db";
 import nodemailer from "nodemailer";
 
-type MailResult =
-  | {
-      recipient: string;
-      status: "success";
-      id: string | undefined;
-    }
-  | {
-      recipient: string;
-      status: "failed";
-      error: unknown;
-    };
+export type MailResult = {
+  recipient?: string;
+  status: "success" | "failed";
+  id?: string;
+  error?: unknown;
+};
 
 const SMTP_SERVER_HOST = process.env.SMTP_SERVER_HOST;
 const SMTP_SERVER_USERNAME = process.env.SMTP_SERVER_USERNAME;
@@ -101,7 +96,6 @@ export async function sendMail(data: sendMailSchemaType): Promise<MailResult> {
   if (guard?.error) {
     console.error(guard.error);
     return {
-      recipient: "",
       status: "failed",
       error: guard.error,
     };
@@ -111,7 +105,6 @@ export async function sendMail(data: sendMailSchemaType): Promise<MailResult> {
 
   if (!parsedData.success) {
     return {
-      recipient: "",
       status: "failed",
       error: parsedData.error.message,
     };
@@ -137,29 +130,23 @@ export async function sendMail(data: sendMailSchemaType): Promise<MailResult> {
 
 export async function sendBatchMail(
   data: sendMailBatchSchemaType,
-): Promise<MailResult[]> {
+): Promise<MailResult[] | MailResult> {
   const guard = await guardCall();
   if (guard?.error) {
     console.error(guard.error);
-    return [
-      {
-        error: guard.error,
-        recipient: "",
-        status: "failed",
-      },
-    ];
+    return {
+      error: guard.error,
+      status: "failed",
+    };
   }
 
   const parsedData = sendMailBatchSchema.safeParse(data);
 
   if (!parsedData.success) {
-    return [
-      {
-        recipient: "",
-        status: "failed",
-        error: parsedData.error.message,
-      },
-    ];
+    return {
+      status: "failed",
+      error: parsedData.error.message,
+    };
   }
 
   const { email, recipients, subject, text, html } = parsedData.data;
@@ -193,7 +180,6 @@ export async function sendMailFromApp(
 ): Promise<MailResult> {
   if (!SMTP_SERVER_USERNAME) {
     return {
-      recipient: "",
       status: "failed",
       error: "Variable is not set",
     };
@@ -202,7 +188,6 @@ export async function sendMailFromApp(
   const parsedData = sendMailFromAppSchema.safeParse(data);
   if (!parsedData.success) {
     return {
-      recipient: "",
       status: "failed",
       error: parsedData.error.message,
     };
@@ -221,26 +206,20 @@ export async function sendMailFromApp(
 
 export async function sendMailFromAppBatch(
   data: sendMailFromAppBatchSchemaType,
-) {
+): Promise<MailResult[] | MailResult> {
   if (!SMTP_SERVER_USERNAME) {
-    return [
-      {
-        recipient: "",
-        status: "failed",
-        error: "Variable is not set",
-      },
-    ];
+    return {
+      status: "failed",
+      error: "Variable is not set",
+    };
   }
 
   const parsedData = sendMailFromAppBatchSchema.safeParse(data);
   if (!parsedData.success) {
-    return [
-      {
-        recipient: "",
-        status: "failed",
-        error: parsedData.error.message,
-      },
-    ];
+    return {
+      status: "failed",
+      error: parsedData.error.message,
+    };
   }
 
   const { subject, text, html, recipients } = parsedData.data;
