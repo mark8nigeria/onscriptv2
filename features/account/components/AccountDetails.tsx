@@ -7,16 +7,23 @@ import { useAccount } from "wagmi";
 import { shortenAddress } from "@/utils";
 import ButtonAction from "@/components/ButtonAction";
 import { signOut } from "next-auth/react";
+import OnchainAccount from "./OnchainAccount";
+import Link from "next/link";
+import { UserRole } from "@/prisma/generated/prisma";
 
 type AccountDetailsProps = {
   name?: string | null;
   image?: string | null;
   isPremium: boolean;
+  fid: number;
+  role: UserRole;
 };
 export default function AccountDetails({
   name,
   image,
   isPremium,
+  fid,
+  role,
 }: AccountDetailsProps) {
   const { address } = useAccount();
 
@@ -37,6 +44,8 @@ export default function AccountDetails({
         <h3 className="font-medium text-xl text-center w-full">@{name}</h3>
       </div>
 
+      <OnchainAccount fid={fid} />
+
       <div className="space-y-4 w-full">
         <div className="w-full flex items-center justify-start gap-2">
           <Wallet className="size-6" />
@@ -55,6 +64,16 @@ export default function AccountDetails({
           </div>
         </div>
       </div>
+
+      {role === "ADMIN" && (
+        <div>
+          <Link href={"/admin/dashboard"}>
+            <ButtonAction btnType="primary" className="w-fit">
+              Visit Admin Panel
+            </ButtonAction>
+          </Link>
+        </div>
+      )}
 
       <div className="w-full flex items-center justify-center">
         <ButtonAction

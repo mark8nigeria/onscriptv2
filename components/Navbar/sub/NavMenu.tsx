@@ -5,12 +5,14 @@ import ButtonAction from "@/components/ButtonAction";
 import { Menu, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navLinks } from "@/data/navlinks.data";
+import { adminNavLinks, navLinks } from "@/data/navlinks.data";
 import { cn } from "@/lib/utils";
+import { adminPrefix } from "@/data/routes.data";
 
 export default function NavMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const isAdminRoute = pathname.startsWith(adminPrefix);
 
   return (
     <>
@@ -32,21 +34,23 @@ export default function NavMenu() {
           </ButtonAction>
 
           <div className="flex flex-col items-start justify-start gap-4 rounded-3xl bg-white p-4 w-72">
-            {navLinks.map(({ href, name }, i) => (
-              <Link
-                key={i}
-                href={href}
-                onClick={() => setIsMenuOpen(false)}
-                className={cn(
-                  "bg-neutral-50 py-2.5 px-4 w-full rounded-full hover:bg-neutral-200 duration-300 transition-colors",
-                  {
-                    "bg-neutral-200": href === pathname,
-                  },
-                )}
-              >
-                <p className="text-lg text-black font-medium">{name}</p>
-              </Link>
-            ))}
+            {(isAdminRoute ? adminNavLinks : navLinks).map(
+              ({ href, name }, i) => (
+                <Link
+                  key={i}
+                  href={href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={cn(
+                    "bg-neutral-50 py-2.5 px-4 w-full rounded-full hover:bg-neutral-200 duration-300 transition-colors",
+                    {
+                      "bg-neutral-200": href === pathname,
+                    },
+                  )}
+                >
+                  <p className="text-lg text-black font-medium">{name}</p>
+                </Link>
+              ),
+            )}
           </div>
         </div>
       </div>
