@@ -36,12 +36,18 @@ async function sendDirectCast(fid: number, message: string, retries = 3) {
 
       // Client-side error → no retry
       return { fid, success: false, status: res.status, attempts: attempt };
-    } catch (err: any) {
+    } catch (err) {
       if (attempt < retries) {
         await new Promise((r) => setTimeout(r, 1000 * attempt));
         continue;
       }
-      return { fid, success: false, error: err.message, attempts: attempt };
+      console.log(err);
+      return {
+        fid,
+        success: false,
+        error: "Something went wrong",
+        attempts: attempt,
+      };
     }
   }
 }
@@ -50,9 +56,10 @@ async function sendDirectCast(fid: number, message: string, retries = 3) {
 async function runInBatches<T>(
   items: T[],
   batchSize: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn: (item: T) => Promise<any>,
 ) {
-  const results: any[] = [];
+  const results = [];
   for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const settled = await Promise.allSettled(batch.map(fn));

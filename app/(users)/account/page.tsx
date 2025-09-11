@@ -4,8 +4,6 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { AccountDetails } from "@/features/account/components";
 import { getUserById } from "@/helpers/read-db";
-import Link from "next/link";
-import ButtonAction from "@/components/ButtonAction";
 
 export default async function AccountPage() {
   const session = await auth();
@@ -23,18 +21,6 @@ export default async function AccountPage() {
   }
 
   const { fid, isPremium, username, pfpUrl, role } = user;
-
-  // const mockUserData = {
-  //   address: "0x3097139c11366006F73Fd357c1F2489d8CF3B96A",
-  //   fid: 1175517,
-  //   id: "cme6dktp90000ky044dw45lo5",
-  //   image:
-  //     "https://tba-mobile.mypinata.cloud/ipfs/QmeMpPVcM5Ex4EKuih8oUBMxzhbBNA2MBxQFL54KAL5JDs?pinataGatewayToken=3nq0UVhtd3rYmgYDdb1I9qv7rHsw-_DzwdWkZPRQ-QW1avFI9dCS8knaSfq_R5_q",
-  //   name: "wahaladev.base.eth",
-  //   isPremium: false,
-  // };
-
-  // const { name, image, isPremium } = mockUserData;
 
   return (
     <main className="text-black p-4 flex items-start justify-start flex-col w-full gap-4">
