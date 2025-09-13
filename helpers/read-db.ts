@@ -26,3 +26,20 @@ export const getUserByFid = async (fid: number) => {
   });
   return user;
 };
+
+export const getAllCinematicStreakParticipants = async () => {
+  const participants = await db.launchCampaignParticipants.findMany({
+    orderBy: [{ isApproved: "desc" }, { createdAt: "desc" }],
+  });
+
+  return participants;
+};
+
+export const numberOfUnapprovedStreakParticipants = async () => {
+  const unapprovedCount = await db.launchCampaignParticipants.count({
+    where: {
+      isApproved: false,
+    },
+  });
+  return unapprovedCount;
+};
