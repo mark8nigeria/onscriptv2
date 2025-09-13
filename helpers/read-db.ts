@@ -29,7 +29,7 @@ export const getUserByFid = async (fid: number) => {
 
 export const getAllCinematicStreakParticipants = async () => {
   const participants = await db.launchCampaignParticipants.findMany({
-    orderBy: [{ isApproved: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ isApproved: "asc" }, { createdAt: "desc" }],
   });
 
   return participants;
