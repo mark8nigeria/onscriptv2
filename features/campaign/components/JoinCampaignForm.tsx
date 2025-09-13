@@ -53,12 +53,11 @@ export default function JoinCampaignForm({
     startTransition(async () => {
       const res = await joinCampaignAction(data);
       if (res.error) {
-        console.log("error", res.error);
-        toast(res.error);
+        toast.error(res.error);
         setIsError(res.error);
       }
       if (res.success) {
-        toast("Form submitted");
+        toast.success("Application submitted. Awaiting approval.");
         setIsSuccess(true);
         setJoinedStreak(true);
         router.refresh();

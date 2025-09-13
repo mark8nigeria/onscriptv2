@@ -67,7 +67,7 @@ With excitement,
 The Cinematic Streak Team`,
     });
 
-    return { success: "user have been approved" };
+    return { success: "All pending approvals approved." };
   } catch (error) {
     console.log("error approving", error);
     return { error: "Something went wrong" };

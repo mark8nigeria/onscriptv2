@@ -11,7 +11,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const btnVariants = {
   primary:
-    "w-full bg-black hover:bg-black/80 font-medium text-white py-3.5 px-4 rounded-lg capitalize",
+    "w-full bg-black hover:bg-black/80 font-medium text-white py-3.5 px-4 rounded-lg capitalize disabled:opacity-60",
   secondary:
     "w-full bg-neutral-300 hover:bg-neutral-300/80 font-medium text-black py-3.5 px-4 rounded-lg capitalize",
   badge:

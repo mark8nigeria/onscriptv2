@@ -4,9 +4,10 @@ import ButtonAction from "@/components/ButtonAction";
 import { cn } from "@/lib/utils";
 import { $Enums } from "@/prisma/generated/prisma";
 import { Loader2 } from "lucide-react";
-import { useState, useTransition } from "react";
-import { approveParticipant } from "../actions";
+import { useEffect, useState, useTransition } from "react";
+import { approveParticipant } from "../../../actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type ParticipantType = {
   id: string;
@@ -27,15 +28,20 @@ type ParticipantType = {
 
 export default function Participant({
   username,
-  email,
   isApproved: approved,
   id,
 }: ParticipantType) {
   const [isApproved, setIsApproved] = useState(approved);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsApproved(approved);
+  }, [approved]);
+
   return (
-    <div className="w-full flex items-center justify-between pt-4 first:pt-0">
-      <p>{username}</p>
+    <div className="w-full flex items-center justify-between pt-4 first:pt-0 px-4">
+      <p>@{username}</p>
       <ButtonAction
         btnType="badge"
         disabled={!!(isPending || isApproved)}
@@ -49,8 +55,9 @@ export default function Participant({
               }
 
               if (result.success) {
-                toast.success("approved");
+                toast.success("Approved");
                 setIsApproved(true);
+                router.refresh();
               }
             });
           }
@@ -58,7 +65,7 @@ export default function Participant({
         className={cn(
           "border border-green-500 bg-green-500/10 text-green-500 rounded-full py-1 hover:bg-green-500/10 capitalize",
           {
-            "border border-red-500 bg-red-500/10 text-red-500 rounded-full py-1 hover:bg-orange-500/10":
+            "border border-orange-500 bg-orange-500/10 text-orange-500 rounded-full py-1 hover:bg-orange-500/10":
               !isApproved,
           },
         )}
