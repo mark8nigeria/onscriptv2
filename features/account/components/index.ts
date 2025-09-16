@@ -1,3 +1,4 @@
 import AccountDetails from "./AccountDetails";
+import OnchainAccount from "./OnchainAccount";
 
-export { AccountDetails };
+export { AccountDetails, OnchainAccount };

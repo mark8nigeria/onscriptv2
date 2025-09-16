@@ -13,6 +13,7 @@ export const joinCampaignFormSchema = z.object({
     "Conceptual",
     "Funny",
   ]),
+  following_team: z.enum(["yes", "no"]),
 });
 
 export type JoinCampaignFormDataType = z.infer<typeof joinCampaignFormSchema>;

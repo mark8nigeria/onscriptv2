@@ -1,7 +1,6 @@
 "use client";
 import React, { Fragment } from "react";
 import { useAccount } from "wagmi";
-import { CardContent } from "@/components/ui/card";
 import {
   ConnectWallet,
   Wallet,
@@ -21,7 +20,12 @@ import Loader from "@/components/Loader";
 import useLogin from "@/features/auth/utils/useLogin";
 
 export default function Login() {
-  const { isError, isFetching, handleSignIn } = useLogin();
+  const {
+    isError,
+    isFetching,
+    handleSignIn,
+    // mockSignIn
+  } = useLogin();
   const { address } = useAccount();
 
   return (

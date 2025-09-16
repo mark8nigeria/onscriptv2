@@ -218,7 +218,10 @@ exports.Prisma.LaunchCampaignParticipantsScalarFieldEnum = {
   helpNeeded: 'helpNeeded',
   storyTellingVibe: 'storyTellingVibe',
   userId: 'userId',
-  isApproved: 'isApproved'
+  isApproved: 'isApproved',
+  following_team: 'following_team',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.StreakScalarFieldEnum = {

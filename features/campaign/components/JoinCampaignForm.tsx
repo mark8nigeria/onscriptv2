@@ -7,6 +7,7 @@ import { JoinCampaignFormDataType } from "../schemas";
 import { joinCampaignAction } from "../actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useOpenUrl } from "@coinbase/onchainkit/minikit";
 
 type JoinCampaignFormProps = {
   setJoinedStreak: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,6 +20,7 @@ export default function JoinCampaignForm({
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState<string>();
   const router = useRouter();
+  const openUrl = useOpenUrl();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,17 +44,20 @@ export default function JoinCampaignForm({
         (formData.get(
           "story_telling_vibes",
         ) as JoinCampaignFormDataType["story_telling_vibes"]) ?? null,
+      following_team:
+        (formData.get(
+          "following_team",
+        ) as JoinCampaignFormDataType["following_team"]) ?? null,
     };
 
     startTransition(async () => {
       const res = await joinCampaignAction(data);
       if (res.error) {
-        console.log("error", res.error);
-        toast(res.error);
+        toast.error(res.error);
         setIsError(res.error);
       }
       if (res.success) {
-        toast("Form submitted");
+        toast.success("Application submitted. Awaiting approval.");
         setIsSuccess(true);
         setJoinedStreak(true);
         router.refresh();
@@ -61,7 +66,7 @@ export default function JoinCampaignForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+    <form onSubmit={handleSubmit} className="w-full grid grid-cols-1 gap-4">
       {isError && <p className="text-red-800 text-center">{isError}</p>}
       {isSuccess && (
         <p className="text-green-800 text-center">Form submitted</p>
@@ -262,6 +267,52 @@ export default function JoinCampaignForm({
           label="Funny"
           value={"Funny"}
           name="story_telling_vibes"
+          containerClassName="w-fit flex-row-reverse items-center gap-2"
+          className="w-fit"
+          labelClassName="font-normal"
+          required
+          hideRequired
+        />
+      </div>
+
+      <div className="space-y-1">
+        <div className="space-y-1">
+          <p className="block text-sm font-medium leading-6 text-gray-900">
+            Have you followed the Cinematic Streak Team
+            <span className="text-red-500">*</span>
+          </p>
+
+          <ButtonAction
+            btnType="badge"
+            className="w-fit py-2 capitalize"
+            type="button"
+            onClick={() =>
+              openUrl(
+                "https://farcaster.xyz/ateh/pack/Cinematic-Streak-Team-jtfm03",
+              )
+            }
+          >
+            Follow the team now
+          </ButtonAction>
+        </div>
+        <Input
+          type="radio"
+          id="yes-team"
+          label="Yes"
+          value={"yes"}
+          name="following_team"
+          containerClassName="w-fit flex-row-reverse items-center gap-2"
+          className="w-fit"
+          labelClassName="font-normal"
+          required
+          hideRequired
+        />
+        <Input
+          type="radio"
+          id="no-team"
+          label="No"
+          value={"no"}
+          name="following_team"
           containerClassName="w-fit flex-row-reverse items-center gap-2"
           className="w-fit"
           labelClassName="font-normal"

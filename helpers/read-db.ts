@@ -80,3 +80,20 @@ export const getAllUsersCast = async (userId: string) => {
     return null;
   }
 };
+
+export const getAllCinematicStreakParticipants = async () => {
+  const participants = await db.launchCampaignParticipants.findMany({
+    orderBy: [{ isApproved: "asc" }, { createdAt: "desc" }],
+  });
+
+  return participants;
+};
+
+export const numberOfUnapprovedStreakParticipants = async () => {
+  const unapprovedCount = await db.launchCampaignParticipants.count({
+    where: {
+      isApproved: false,
+    },
+  });
+  return unapprovedCount;
+};

@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { joinCampaignFormSchema } from "../schemas";
 import { getUserById } from "@/helpers/read-db";
 import db from "@/lib/db";
+import { sendMailFromAppBatch } from "@/lib/send-mail";
+import { adminEmails } from "@/data/adminEmails.data";
 
 export default async function joinCampaignAction(data: unknown) {
   try {
@@ -22,6 +24,7 @@ export default async function joinCampaignAction(data: unknown) {
         error: "Invalid data",
       };
     }
+    console.log("id", session.user.id);
 
     const user = await getUserById(session.user.id);
 
@@ -37,6 +40,7 @@ export default async function joinCampaignAction(data: unknown) {
       story_telling_vibes,
       twitter,
       web3_content_experience,
+      following_team,
     } = parsedData.data;
     const { fid, username } = user;
 
@@ -67,7 +71,17 @@ export default async function joinCampaignAction(data: unknown) {
           | "KINDA",
         xHandle: twitter,
         isApproved: false,
+        following_team: following_team === "yes",
       },
+    });
+
+    await sendMailFromAppBatch({
+      recipients: adminEmails,
+      subject: "New Registration For Cinematic Streak",
+      text: `@${username} just signed up for cinematic streak and is waiting to be approved.
+      Proceed to admin dashboard to approve:
+      https://farcaster.xyz/miniapps/a7wJi9WFBzLu/onscript/admin/dashboard
+      `,
     });
 
     return {

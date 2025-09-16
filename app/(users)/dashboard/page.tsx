@@ -5,11 +5,14 @@ import StatusCard from "@/components/StatusCard";
 import campaigns from "@/data/campaigns.data";
 import { scheduledCasts } from "@/data/casts.data";
 import CastCard from "@/features/cast/components/CastCard";
+import { scheduledCasts } from "@/data/casts.data";
+import CastCard from "@/features/cast/components/CastCard";
 import ScheduleCastNow from "@/features/cast/components/ScheduleCastNow";
 import { Archive, CalendarClock, LucideSend } from "lucide-react";
 import React from "react";
 import { TbSpeakerphone } from "react-icons/tb";
 import { CampaignCard } from "@/features/campaign/components";
+import Link from "next/link";
 import Link from "next/link";
 
 export default async function Dashboard() {
@@ -17,17 +20,6 @@ export default async function Dashboard() {
   if (!session || !session.user || !session.user.id) redirect("/login");
 
   const { name, image, id } = session.user;
-
-  // const mockUserData = {
-  //   address: "0x3097139c11366006F73Fd357c1F2489d8CF3B96A",
-  //   fid: 1175517,
-  //   id: "cme6dktp90000ky044dw45lo5",
-  //   image:
-  //     "https://tba-mobile.mypinata.cloud/ipfs/QmeMpPVcM5Ex4EKuih8oUBMxzhbBNA2MBxQFL54KAL5JDs?pinataGatewayToken=3nq0UVhtd3rYmgYDdb1I9qv7rHsw-_DzwdWkZPRQ-QW1avFI9dCS8knaSfq_R5_q",
-  //   name: "wahaladev.base.eth",
-  // };
-
-  // const { name, image } = mockUserData;
 
   const pendingCastsShown = 3;
   const pendingCasts = scheduledCasts.slice(0, pendingCastsShown);
@@ -79,7 +71,7 @@ export default async function Dashboard() {
             </ButtonAction>
           </Link>
         </div>
-      </section> */}
+      </section>
     </main>
   );
 }
