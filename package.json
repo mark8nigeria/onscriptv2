@@ -9,7 +9,8 @@
     "lint": "next lint",
     "tunnel": "cloudflared tunnel --url http://localhost:3000",
     "dev-test": "next dev --experimental-https",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "upstash": "npx @upstash/qstash-cli dev"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
