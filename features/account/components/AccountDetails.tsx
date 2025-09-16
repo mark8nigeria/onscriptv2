@@ -8,7 +8,6 @@ import { shortenAddress } from "@/utils";
 import ButtonAction from "@/components/ButtonAction";
 import { signOut } from "next-auth/react";
 import OnchainAccount from "./OnchainAccount";
-import Link from "next/link";
 import { UserRole } from "@/prisma/generated/prisma";
 
 type AccountDetailsProps = {
@@ -23,7 +22,6 @@ export default function AccountDetails({
   image,
   isPremium,
   fid,
-  role,
 }: AccountDetailsProps) {
   const { address } = useAccount();
 
@@ -64,16 +62,6 @@ export default function AccountDetails({
           </div>
         </div>
       </div>
-
-      {role === "ADMIN" && (
-        <div>
-          <Link href={"/admin/dashboard"}>
-            <ButtonAction btnType="primary" className="w-fit">
-              Visit Admin Panel
-            </ButtonAction>
-          </Link>
-        </div>
-      )}
 
       <div className="w-full flex items-center justify-center">
         <ButtonAction

@@ -3,17 +3,6 @@ import { getUserById } from "@/helpers/read-db";
 import db from "@/lib/db";
 import { NextResponse } from "next/server";
 
-// const mockUserData = {
-//   address: "0x3097139c11366006F73Fd357c1F2489d8CF3B96A",
-//   fid: 1175517,
-//   id: "cme6dktp90000ky044dw45lo5",
-//   image:
-//     "https://tba-mobile.mypinata.cloud/ipfs/QmeMpPVcM5Ex4EKuih8oUBMxzhbBNA2MBxQFL54KAL5JDs?pinataGatewayToken=3nq0UVhtd3rYmgYDdb1I9qv7rHsw-_DzwdWkZPRQ-QW1avFI9dCS8knaSfq_R5_q",
-//   name: "wahaladev.base.eth",
-// };
-
-// const { name, image, id } = mockUserData;
-
 export async function GET() {
   try {
     const session = await auth();

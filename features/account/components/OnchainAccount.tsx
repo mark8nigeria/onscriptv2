@@ -3,7 +3,10 @@
 import ButtonAction from "@/components/ButtonAction";
 import Loader from "@/components/Loader";
 import { onscriptUserManagementAbi } from "@/constants/abis";
-import { onscriptUserManagementAddressMainnet } from "@/constants/contractAddresses";
+import {
+  onscriptUserManagementAddressMainnet,
+  onscriptUserManagementAddressSepolia,
+} from "@/constants/contractAddresses";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAccount, useReadContract } from "wagmi";
@@ -15,11 +18,12 @@ type OnchainAccountProps = {
 
 export default function OnchainAccount({ fid }: OnchainAccountProps) {
   const [isUserDataOnChian, setIsUserDataOnChian] = useState(false);
-  const { address } = useAccount();
+  const { address } = useAccount(); //0x3097139c11366006F73Fd357c1F2489d8CF3B96A
   const { data, isLoading, isError } = useReadContract({
-    address: onscriptUserManagementAddressMainnet,
+    // address: onscriptUserManagementAddressMainnet,
+    address: onscriptUserManagementAddressSepolia,
     abi: onscriptUserManagementAbi,
-    functionName: "getUserFid",
+    functionName: "getIsUserRegistered",
     args: [address],
   });
 
@@ -32,7 +36,8 @@ export default function OnchainAccount({ fid }: OnchainAccountProps) {
 
   const comeOnchain = () => {
     writeContract({
-      address: onscriptUserManagementAddressMainnet,
+      // address: onscriptUserManagementAddressMainnet,
+      address: onscriptUserManagementAddressSepolia,
       abi: onscriptUserManagementAbi,
       functionName: "registerUser",
       args: [fid],
@@ -40,8 +45,8 @@ export default function OnchainAccount({ fid }: OnchainAccountProps) {
   };
 
   useEffect(() => {
-    if (typeof data === "bigint") {
-      setIsUserDataOnChian(data > BigInt(0));
+    if (typeof data === "boolean") {
+      setIsUserDataOnChian(data);
     }
   }, [data]);
 

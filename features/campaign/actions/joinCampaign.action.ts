@@ -24,6 +24,7 @@ export default async function joinCampaignAction(data: unknown) {
         error: "Invalid data",
       };
     }
+    console.log("id", session.user.id);
 
     const user = await getUserById(session.user.id);
 

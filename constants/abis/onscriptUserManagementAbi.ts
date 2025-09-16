@@ -1,4 +1,4 @@
-const onscriptUserManagementAbi = [
+export const onscriptUserManagementAbi = [
   {
     inputs: [
       { internalType: "address", name: "initialOwner", type: "address" },
@@ -237,6 +237,13 @@ const onscriptUserManagementAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getId",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
     name: "getIsUserAdmin",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
@@ -246,6 +253,13 @@ const onscriptUserManagementAbi = [
   {
     inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
     name: "getIsUserPremium",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
+    name: "getIsUserRegistered",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
@@ -272,6 +286,13 @@ const onscriptUserManagementAbi = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
+    name: "makeUserPremium",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [{ internalType: "address", name: "", type: "address" }],
@@ -281,6 +302,13 @@ const onscriptUserManagementAbi = [
   {
     inputs: [],
     name: "payForPremium",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "fid", type: "uint256" }],
+    name: "registerAndGoPremium",
     outputs: [],
     stateMutability: "payable",
     type: "function",
@@ -352,5 +380,3 @@ const onscriptUserManagementAbi = [
   },
   { stateMutability: "payable", type: "receive" },
 ];
-
-export default onscriptUserManagementAbi;

@@ -3,13 +3,14 @@ import { redirect } from "next/navigation";
 import ButtonAction from "@/components/ButtonAction";
 import StatusCard from "@/components/StatusCard";
 import campaigns from "@/data/campaigns.data";
-// import { scheduledCasts } from "@/data/casts.data";
-// import CastCard from "@/features/cast/components/CastCard";
+import { scheduledCasts } from "@/data/casts.data";
+import CastCard from "@/features/cast/components/CastCard";
 import ScheduleCastNow from "@/features/cast/components/ScheduleCastNow";
 import { Archive, CalendarClock, Lock, LucideSend } from "lucide-react";
 import React from "react";
 import { TbSpeakerphone } from "react-icons/tb";
 import { CampaignCard } from "@/features/campaign/components";
+import Link from "next/link";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -17,19 +18,8 @@ export default async function Dashboard() {
 
   const { name, image } = session.user;
 
-  // const mockUserData = {
-  //   address: "0x3097139c11366006F73Fd357c1F2489d8CF3B96A",
-  //   fid: 1175517,
-  //   id: "cme6dktp90000ky044dw45lo5",
-  //   image:
-  //     "https://tba-mobile.mypinata.cloud/ipfs/QmeMpPVcM5Ex4EKuih8oUBMxzhbBNA2MBxQFL54KAL5JDs?pinataGatewayToken=3nq0UVhtd3rYmgYDdb1I9qv7rHsw-_DzwdWkZPRQ-QW1avFI9dCS8knaSfq_R5_q",
-  //   name: "wahaladev.base.eth",
-  // };
-
-  // const { name, image } = mockUserData;
-
-  // const pendingCastsShown = 3;
-  // const pendingCasts = scheduledCasts.slice(0, pendingCastsShown);
+  const pendingCastsShown = 3;
+  const pendingCasts = scheduledCasts.slice(0, pendingCastsShown);
 
   return (
     <main className="text-black p-4 flex items-start justify-start flex-col w-full gap-4">
@@ -63,39 +53,21 @@ export default async function Dashboard() {
           Scheduled casts
         </h3>
 
-        <div className="p-4 w-full">
-          <div className="p-8 border border-neutral-200 rounded-3xl flex items-center justify-center gap-4 flex-col w-full">
-            <div className="border border-neutral-100 p-4 rounded-full">
-              <Lock className="size-8" />
-            </div>
-            <p className="text-center text-neutral-700">
-              {"This feature is not available yet"}
-            </p>
-            <ButtonAction
-              btnType="primary"
-              className="flex items-center justify-center gap-2 w-fit px-8"
-            >
-              <Lock className="size-4 text-white" />
-              <p className="text-white">Coming soon</p>
-            </ButtonAction>
-          </div>
-        </div>
-
-        {/* <div className="grid grid-cols-1 divide-y divide-neutral-100">
+        <div className="grid grid-cols-1 divide-y divide-neutral-100">
           {pendingCasts.map((cast, i) => {
             return (
               <CastCard key={i} {...cast} username={name} profilePic={image} />
             );
           })}
-        </div> */}
+        </div>
 
-        {/* <div className="p-4">
+        <div className="p-4">
           <Link href={"/casts"}>
             <ButtonAction btnType="primary" className="w-fit px-8">
               See all
             </ButtonAction>
           </Link>
-        </div> */}
+        </div>
       </section>
     </main>
   );

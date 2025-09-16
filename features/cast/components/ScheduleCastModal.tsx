@@ -65,15 +65,15 @@ export default function ScheduleCastModal({
     // resetModal(false);
   };
 
-  return (
-    <ButtonAction
-      btnType="primary"
-      className="flex items-center justify-center gap-2 w-fit px-8"
-    >
-      <Lock className="size-4 text-white" />
-      <p className="text-white">Coming soon</p>
-    </ButtonAction>
-  );
+  // return (
+  //   <ButtonAction
+  //     btnType="primary"
+  //     className="flex items-center justify-center gap-2 w-fit px-8"
+  //   >
+  //     <Lock className="size-4 text-white" />
+  //     <p className="text-white">Coming soon</p>
+  //   </ButtonAction>
+  // );
 
   return (
     <AlertDialog open={isModalOpen} onOpenChange={resetModal}>
