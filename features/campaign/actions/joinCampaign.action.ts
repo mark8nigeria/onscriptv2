@@ -21,7 +21,7 @@ export default async function joinCampaignAction(data: unknown) {
 
     if (!parsedData.success) {
       return {
-        error: "Invalid data",
+        error: parsedData.error.message,
       };
     }
 
@@ -52,6 +52,28 @@ export default async function joinCampaignAction(data: unknown) {
     if (existingUser) {
       return {
         error: "You've joined this campaign already",
+      };
+    }
+
+    const existingCampaignWithEmail =
+      await db.launchCampaignParticipants.findUnique({
+        where: { email },
+      });
+
+    if (existingCampaignWithEmail) {
+      return {
+        error: "Email is already registered",
+      };
+    }
+
+    const existingCampaignWithTwitter =
+      await db.launchCampaignParticipants.findUnique({
+        where: { xHandle: twitter },
+      });
+
+    if (existingCampaignWithTwitter) {
+      return {
+        error: "Twitter handle is already registered",
       };
     }
 

@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from "react";
 import ButtonAction from "@/components/ButtonAction";
 import Input from "@/components/Input";
-import { JoinCampaignFormDataType } from "../schemas";
+import { JoinCampaignFormDataType, joinCampaignFormSchema } from "../schemas";
 import { joinCampaignAction } from "../actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -50,8 +50,15 @@ export default function JoinCampaignForm({
         ) as JoinCampaignFormDataType["following_team"]) ?? null,
     };
 
+    const parsedData = joinCampaignFormSchema.safeParse(data);
+
+    if (!parsedData.success) {
+      toast.error(parsedData.error.message);
+      return;
+    }
+
     startTransition(async () => {
-      const res = await joinCampaignAction(data);
+      const res = await joinCampaignAction(parsedData.data);
       if (res.error) {
         toast.error(res.error);
         setIsError(res.error);
