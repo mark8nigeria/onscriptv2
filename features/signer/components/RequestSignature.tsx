@@ -7,11 +7,7 @@ import { toast } from "sonner";
 import Loader from "@/components/Loader";
 import RequestSignatureQrModal from "./RequestSignatureQrModal";
 
-type RequestSignatureProps = {
-  id: string;
-};
-
-export default function RequestSignature({ id }: RequestSignatureProps) {
+export default function RequestSignature() {
   const [initiateSignerErr, setInitiateSignerErr] = useState<string>();
   const [deeplinkUrl, setDeeplinkUrl] = useState<string>();
   const [signerUuid, setSignerUuid] = useState<string>();
@@ -40,6 +36,8 @@ export default function RequestSignature({ id }: RequestSignatureProps) {
   useEffect(() => {
     if (!signerUuid || !isPolling) return;
 
+    let isApproved = false;
+
     const id = setInterval(async () => {
       const res = await checkSignerStatus(signerUuid);
 
@@ -59,9 +57,11 @@ export default function RequestSignature({ id }: RequestSignatureProps) {
 
       if (status === "approved") {
         setIsPolling(false);
-        toast.success("Signer has been approved");
         setIsQrModalOpen(false);
         clearInterval(id);
+        if (isApproved) return;
+        toast.success("Signer has been approved");
+        isApproved = true;
         return;
       }
     }, 2000);

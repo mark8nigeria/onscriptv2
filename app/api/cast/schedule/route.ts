@@ -51,20 +51,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // if(!user?.signerUuid){
-    //   return NextResponse.json(
-    //     { error: "User does not have a signer" },
-    //     { status: 400 },
-    //   );
-    // }
+    if (!user?.signerUuid) {
+      return NextResponse.json(
+        { error: "User does not have a signer" },
+        { status: 400 },
+      );
+    }
+    // embeds?.push({
+    //   url: "https://images.unsplash.com/photo-1757252800867-2e78e08a6d53",
+    // });
 
     if (files.length > 0) {
       //Todo: store the images in pinata
-      // embeds?.push({url:"sth"})
+      // embeds?.push({
+      //   url: "https://images.unsplash.com/photo-1757252800867-2e78e08a6d53",
+      // });
     }
 
     const postData: PostSchemaDataType = {
-      signerUuid: user.signerUuid || "example-signer-uuid",
+      signerUuid: user.signerUuid,
       status,
       text,
       userId,

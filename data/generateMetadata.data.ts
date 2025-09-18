@@ -5,6 +5,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: process.env.NEXT_PUBLIC_ONCHAINKIT_PROJECT_NAME,
     description: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
+    icons: [
+      {
+        type: "image/png",
+        url: "/logo.png",
+      },
+    ],
     other: {
       "fc:frame": JSON.stringify({
         version: "next",

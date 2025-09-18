@@ -12,8 +12,15 @@ const titles: Record<PathDisplayed, string> = {
   "create-cast": "New Cast",
 };
 
-export default function useCastModal() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+type useCastModalInput = {
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function useCastModal({
+  isModalOpen,
+  setIsModalOpen,
+}: useCastModalInput) {
   const [isSetPublishTimeOpen, setIsSetPublishTimeOpen] = useState(false);
   const [pathDisplayed, setPathDisplayed] =
     useState<PathDisplayed>("create-cast");
@@ -90,8 +97,6 @@ export default function useCastModal() {
   );
 
   return {
-    isModalOpen,
-    setIsModalOpen,
     pathDisplayed,
     setPathDisplayed,
     files,

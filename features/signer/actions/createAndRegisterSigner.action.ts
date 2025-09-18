@@ -6,7 +6,7 @@ import db from "@/lib/db";
 import { createSignerReturn } from "../schema";
 import { privateKeyToAccount } from "viem/accounts";
 import { publicClient } from "@/client";
-import { onscriptUserManagementAddressSepolia } from "@/constants/contractAddresses";
+import { onscriptUserManagementContractAddress } from "@/constants/contractAddresses";
 import { onscriptUserManagementAbi } from "@/constants/abis";
 
 type CreateSignerReturn = Promise<
@@ -59,7 +59,7 @@ export const createAndRegisterSigner = async (): CreateSignerReturn => {
     }
 
     const isUserPremium = await publicClient.readContract({
-      address: onscriptUserManagementAddressSepolia,
+      address: onscriptUserManagementContractAddress,
       abi: onscriptUserManagementAbi,
       functionName: "getIsUserPremium",
       args: [user.walletAddress],

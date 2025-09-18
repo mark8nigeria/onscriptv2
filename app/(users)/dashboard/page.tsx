@@ -5,15 +5,13 @@ import StatusCard from "@/components/StatusCard";
 import campaigns from "@/data/campaigns.data";
 import { scheduledCasts } from "@/data/casts.data";
 import CastCard from "@/features/cast/components/CastCard";
-import { scheduledCasts } from "@/data/casts.data";
-import CastCard from "@/features/cast/components/CastCard";
 import ScheduleCastNow from "@/features/cast/components/ScheduleCastNow";
 import { Archive, CalendarClock, LucideSend } from "lucide-react";
 import React from "react";
 import { TbSpeakerphone } from "react-icons/tb";
 import { CampaignCard } from "@/features/campaign/components";
 import Link from "next/link";
-import Link from "next/link";
+import { getAllUsersCast, getUserById } from "@/helpers/read-db";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -21,8 +19,17 @@ export default async function Dashboard() {
 
   const { name, image, id } = session.user;
 
-  const pendingCastsShown = 3;
-  const pendingCasts = scheduledCasts.slice(0, pendingCastsShown);
+  const casts = await getAllUsersCast(id);
+  const user = await getUserById(id);
+
+  if (!user) {
+    return (
+      <main className="text-black p-4 flex items-start justify-start flex-col w-full gap-4">
+        <h1 className="text-black">Something went wrong</h1>
+        <ButtonAction btnType="primary">Reload page</ButtonAction>
+      </main>
+    );
+  }
 
   return (
     <main className="text-black p-4 flex items-start justify-start flex-col w-full gap-4">
@@ -49,19 +56,28 @@ export default async function Dashboard() {
         </div>
       </section>
 
-      <ScheduleCastNow profilePic={image} username={name} userId={id} />
+      <ScheduleCastNow
+        profilePic={image}
+        username={name}
+        userId={id}
+        isPremium={user.isPremium}
+        isUuidApprove={user.isUuidApprove}
+        signerUuid={user.signerUuid}
+        walletAddress={user.walletAddress}
+        fid={user.fid}
+      />
 
-      {/* <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col shadow-xl shadow-black/[0.05]">
+      <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col shadow-xl shadow-black/[0.05]">
         <h3 className="font-medium text-xl capitalize text-left w-full p-4 pb-0">
           Scheduled casts
         </h3>
 
-        <div className="grid grid-cols-1 divide-y divide-neutral-100">
-          {pendingCasts.map((cast, i) => {
+        <div className="w-full grid grid-cols-1 divide-y divide-neutral-100">
+          {/* {casts?.map((cast, i) => {
             return (
               <CastCard key={i} {...cast} username={name} profilePic={image} />
             );
-          })}
+          })} */}
         </div>
 
         <div className="p-4">

@@ -57,12 +57,12 @@ export async function POST(req: NextRequest) {
       qstashMessageId,
       status,
       postHash,
-      // text,
-      // embeds,
-      // signerUuid,
-      // parent,
-      // channelId,
-      // parentAuthorFid,
+      text,
+      embeds,
+      signerUuid,
+      parent,
+      channelId,
+      parentAuthorFid,
     } = post;
 
     if (status === "PUBLISHED" || postHash) {
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
         { status: 404 },
       );
     }
-    /**
+
     const url = `${NEYNAR_API_URL}/v2/farcaster/cast/`;
     const postBody = {
       signer_uuid: signerUuid,
@@ -108,15 +108,13 @@ export async function POST(req: NextRequest) {
     const {
       cast: { hash },
     } = await res.json();
-      */
 
     const updatedData = await db.post.update({
       where: {
         qstashMessageId,
       },
       data: {
-        // postHash: hash,
-        postHash: Math.random().toString(36).substring(2, 15),
+        postHash: hash,
         status: "PUBLISHED",
         publishedAt: new Date(),
       },

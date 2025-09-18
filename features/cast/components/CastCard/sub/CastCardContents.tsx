@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import React from "react";
-import CastCardEmbeds from "./CastCardEmbeds";
-import { CastCardProps } from "../cast-card.types";
+import CastCardEmbeds from "../../CastCardEmbeds";
+import { CastCardProps, PostImageSwiperProps } from "../cast-card.types";
 
 export default function CastCardContents({
   text,
@@ -11,7 +11,9 @@ export default function CastCardContents({
   username,
   embeds,
 }: CastCardProps) {
-  const isEmbeds = embeds && embeds.length > 0;
+  const isEmbeds = Array.isArray(embeds) && embeds.length > 0;
+  const castEmbedProps = { embeds } as unknown as PostImageSwiperProps;
+
   return (
     <div className="w-full flex items-start justify-start gap-2">
       <div className="size-9 flex-shrink-0 bg-gray-200 rounded-full overflow-hidden">
@@ -31,7 +33,8 @@ export default function CastCardContents({
           <p className="font-medium">{username}</p>
           <p>{text}</p>
         </div>
-        {isEmbeds && <CastCardEmbeds embeds={embeds} />}
+
+        {isEmbeds && <CastCardEmbeds {...castEmbedProps} />}
       </div>
     </div>
   );

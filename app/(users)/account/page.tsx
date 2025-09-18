@@ -2,7 +2,7 @@ import React from "react";
 import { RequestSignature } from "@/features/signer/components";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { AccountDetails } from "@/features/account/components";
+import AccountDetails from "@/features/account/components/AccountDetails";
 import { getUserById } from "@/helpers/read-db";
 import Link from "next/link";
 import ButtonAction from "@/components/ButtonAction";
@@ -45,9 +45,10 @@ export default async function AccountPage() {
         isPremium={isPremium}
         fid={fid}
         role={role}
+        address={user.walletAddress}
       />
 
-      <RequestSignature id={id} />
+      <RequestSignature />
     </main>
   );
 }

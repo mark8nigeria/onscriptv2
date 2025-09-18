@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import { LogOutIcon, Wallet } from "lucide-react";
-import { useAccount } from "wagmi";
 import { shortenAddress } from "@/utils";
 import ButtonAction from "@/components/ButtonAction";
 import { signOut } from "next-auth/react";
@@ -16,15 +15,15 @@ type AccountDetailsProps = {
   isPremium: boolean;
   fid: number;
   role: UserRole;
+  address: string;
 };
 export default function AccountDetails({
   name,
   image,
   isPremium,
   fid,
+  address,
 }: AccountDetailsProps) {
-  const { address } = useAccount();
-
   return (
     <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col gap-8 shadow-xl shadow-black/[0.05] p-4">
       <div className="w-full flex items-center justify-center flex-col gap-4">
@@ -42,7 +41,7 @@ export default function AccountDetails({
         <h3 className="font-medium text-xl text-center w-full">@{name}</h3>
       </div>
 
-      <OnchainAccount fid={fid} />
+      <OnchainAccount address={address} fid={fid} />
 
       <div className="space-y-4 w-full">
         <div className="w-full flex items-center justify-start gap-2">
