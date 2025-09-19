@@ -21,7 +21,7 @@ export default async function joinCampaignAction(data: unknown) {
 
     if (!parsedData.success) {
       return {
-        error: parsedData.error.message,
+        error: parsedData.error.errors[0].message,
       };
     }
 

@@ -53,7 +53,7 @@ export default function JoinCampaignForm({
     const parsedData = joinCampaignFormSchema.safeParse(data);
 
     if (!parsedData.success) {
-      toast.error(parsedData.error.message);
+      toast.error(parsedData.error.errors[0].message);
       return;
     }
 
