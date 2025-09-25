@@ -3,45 +3,34 @@
 import React from "react";
 import Image from "next/image";
 import { LogOutIcon, Wallet } from "lucide-react";
-import { shortenAddress } from "@/utils";
+import { shortenAddress, useAppSelector } from "@/utils";
 import ButtonAction from "@/components/ButtonAction";
 import { signOut } from "next-auth/react";
 import OnchainAccount from "./OnchainAccount";
-import { UserRole } from "@/prisma/generated/prisma";
 
-type AccountDetailsProps = {
-  name?: string | null;
-  image?: string | null;
-  isPremium: boolean;
-  fid: number;
-  role: UserRole;
-  address: string;
-};
-export default function AccountDetails({
-  name,
-  image,
-  isPremium,
-  fid,
-  address,
-}: AccountDetailsProps) {
+export default function AccountDetails() {
+  const { username, profilePic, walletAddress, isUserPremium } = useAppSelector(
+    (state) => state.user,
+  );
+
   return (
     <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col gap-8 shadow-xl shadow-black/[0.05] p-4">
       <div className="w-full flex items-center justify-center flex-col gap-4">
         <div className="size-32 bg-gray-200 aspect-square overflow-hidden rounded-full">
-          {image && (
+          {profilePic && (
             <Image
-              src={image}
-              alt={name || ""}
+              src={profilePic}
+              alt={username || ""}
               width={450}
               height={450}
               className="w-full h-full object-cover"
             />
           )}
         </div>
-        <h3 className="font-medium text-xl text-center w-full">@{name}</h3>
+        <h3 className="font-medium text-xl text-center w-full">@{username}</h3>
       </div>
 
-      <OnchainAccount address={address} fid={fid} />
+      <OnchainAccount />
 
       <div className="space-y-4 w-full">
         <div className="w-full flex items-center justify-start gap-2">
@@ -49,7 +38,7 @@ export default function AccountDetails({
           <div className="flex items-start justify-start flex-col gap-1">
             <h3 className="font-medium text-xs capitalize">Wallet address</h3>
             <p className="font-medium text-sm">
-              {address && shortenAddress(address)}
+              {walletAddress && shortenAddress(walletAddress)}
             </p>
           </div>
         </div>
@@ -57,7 +46,9 @@ export default function AccountDetails({
           <Wallet className="size-6" />
           <div className="flex items-start justify-start flex-col gap-1">
             <h3 className="font-medium text-xs capitalize">Is premium</h3>
-            <p className="font-medium text-sm">{isPremium ? "Yes" : "No"}</p>
+            <p className="font-medium text-sm">
+              {isUserPremium ? "Yes" : "No"}
+            </p>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import { onscriptUserManagementAbi } from "@/constants/abis";
 import { onscriptUserManagementContractAddress } from "@/constants/contractAddresses";
+import { useEffect } from "react";
 import { useReadContract } from "wagmi";
 
 export default function useIsAddressOnChainAndPremium({
@@ -19,6 +20,9 @@ export default function useIsAddressOnChainAndPremium({
     abi: onscriptUserManagementAbi,
     functionName: "getIsUserRegistered",
     args: [address],
+    query: {
+      enabled: address !== "",
+    },
   });
 
   const {
@@ -31,11 +35,18 @@ export default function useIsAddressOnChainAndPremium({
     abi: onscriptUserManagementAbi,
     functionName: "getIsUserPremium",
     args: [address],
+    query: {
+      enabled: address !== "",
+    },
   });
 
   const refresh: () => Promise<void> = async () => {
     await Promise.all([refetchIsUserRegistered(), refetchIsUserPremium()]);
   };
+
+  useEffect(() => {
+    if (address) refresh();
+  }, [address, refresh]);
 
   return {
     isUserOnChain: !!isUserRegistered,

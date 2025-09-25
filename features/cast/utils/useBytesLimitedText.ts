@@ -33,5 +33,13 @@ export function useByteLimitedText(maxBytes: number = 320) {
     [getByteLength, maxBytes],
   );
 
-  return { text, handleChange, byteLength: getByteLength(text), maxBytes };
+  const reset = () => setText("");
+
+  return {
+    text,
+    handleChange,
+    byteLength: getByteLength(text),
+    maxBytes,
+    reset,
+  };
 }

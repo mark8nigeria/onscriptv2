@@ -4,6 +4,7 @@ export const onscriptUserManagementAbi = [
       { internalType: "address", name: "initialOwner", type: "address" },
       { internalType: "uint256", name: "premiumUsdBase", type: "uint256" },
       { internalType: "address", name: "priceFeedAddress", type: "address" },
+      { internalType: "uint256", name: "plusPriceUsdBase", type: "uint256" },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -40,8 +41,23 @@ export const onscriptUserManagementAbi = [
     name: "OnscriptUserManagement__InvalidChainlinkUpdate",
     type: "error",
   },
+  {
+    inputs: [],
+    name: "OnscriptUserManagement__InvalidDuration",
+    type: "error",
+  },
   { inputs: [], name: "OnscriptUserManagement__InvalidFid", type: "error" },
+  {
+    inputs: [],
+    name: "OnscriptUserManagement__InvalidPaymentPeriod",
+    type: "error",
+  },
   { inputs: [], name: "OnscriptUserManagement__InvalidPrice", type: "error" },
+  {
+    inputs: [],
+    name: "OnscriptUserManagement__MaxPaymentPeriod",
+    type: "error",
+  },
   {
     inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "OnscriptUserManagement__NotAdmin",
@@ -59,6 +75,7 @@ export const onscriptUserManagementAbi = [
     name: "OnscriptUserManagement__UserDoesNotExists",
     type: "error",
   },
+  { inputs: [], name: "OnscriptUserManagement__UserIsPlus", type: "error" },
   {
     inputs: [],
     name: "OnscriptUserManagement__WithdrawalFailed",
@@ -120,6 +137,19 @@ export const onscriptUserManagementAbi = [
     inputs: [
       {
         indexed: true,
+        internalType: "uint256",
+        name: "newMaxPaymentPeriod",
+        type: "uint256",
+      },
+    ],
+    name: "MaxPaymentPeriodUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "address",
         name: "previousOwner",
         type: "address",
@@ -132,6 +162,52 @@ export const onscriptUserManagementAbi = [
       },
     ],
     name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "newDuration",
+        type: "uint256",
+      },
+    ],
+    name: "PlusDurationUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "newPriceUsdBase",
+        type: "uint256",
+      },
+    ],
+    name: "PlusPriceUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "user", type: "address" },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "expiresAt",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "amountPaid",
+        type: "uint256",
+      },
+    ],
+    name: "PlusSubscribed",
     type: "event",
   },
   {
@@ -202,6 +278,20 @@ export const onscriptUserManagementAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: "address", name: "user", type: "address" },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "adminAddress",
+        type: "address",
+      },
+    ],
+    name: "UserMadeFreemium",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "user", type: "address" },
       { indexed: false, internalType: "uint256", name: "fid", type: "uint256" },
     ],
     name: "UserRegistered",
@@ -230,6 +320,26 @@ export const onscriptUserManagementAbi = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
+    name: "getDurationLeftForPlus",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
+    name: "getEffectiveStatus",
+    outputs: [
+      {
+        internalType: "enum OnscriptUserManagement.UserStatus",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getFeedDecimals",
     outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
@@ -240,6 +350,13 @@ export const onscriptUserManagementAbi = [
     inputs: [],
     name: "getId",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
+    name: "getIsPlus",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
@@ -266,6 +383,34 @@ export const onscriptUserManagementAbi = [
   },
   {
     inputs: [],
+    name: "getPlusDuration",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
+    name: "getPlusExpiresAt",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getPlusMaxPaymentPeriod",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getPlusPriceUsd",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getPremiumAmountUsdBase",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
@@ -281,6 +426,16 @@ export const onscriptUserManagementAbi = [
   {
     inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
     name: "grantAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "userAddress", type: "address" },
+      { internalType: "uint256", name: "period", type: "uint256" },
+    ],
+    name: "makeUserPlus",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -308,13 +463,6 @@ export const onscriptUserManagementAbi = [
   },
   {
     inputs: [{ internalType: "uint256", name: "fid", type: "uint256" }],
-    name: "registerAndGoPremium",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "fid", type: "uint256" }],
     name: "registerUser",
     outputs: [],
     stateMutability: "nonpayable",
@@ -329,6 +477,13 @@ export const onscriptUserManagementAbi = [
   },
   {
     inputs: [],
+    name: "requiredWeiForPlus",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "requiredWeiForPremium",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
@@ -337,6 +492,29 @@ export const onscriptUserManagementAbi = [
   {
     inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
     name: "revokeAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "period", type: "uint256" }],
+    name: "setMaxPaymentPeriod",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "amountUsdBase", type: "uint256" },
+    ],
+    name: "setPlusAmount",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "duration", type: "uint256" }],
+    name: "setPlusDuration",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -355,6 +533,13 @@ export const onscriptUserManagementAbi = [
     name: "setPriceFeed",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "periods", type: "uint256" }],
+    name: "subscribePlus",
+    outputs: [],
+    stateMutability: "payable",
     type: "function",
   },
   {

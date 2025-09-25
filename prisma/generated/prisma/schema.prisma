@@ -29,8 +29,9 @@ model Post {
   channelId       String?
   parentAuthorFid Int?
 
-  embeds   Json?
-  postHash String? @unique
+  embeds         Json?
+  pinataFilesIds String[] @default([])
+  postHash       String?  @unique
 
   status      PostStatus @default(DRAFT)
   scheduledAt DateTime?

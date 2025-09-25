@@ -41,6 +41,10 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    --error: 0 84% 60%;
+    --success: 142 77% 40%;
+    --warning: 38 92% 50%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -90,4 +94,8 @@ button {
 }
 button:disabled {
   @apply pointer-events-none opacity-80 cursor-not-allowed;
+}
+
+.sigagn {
+  color: hsl(142, 77%, 40%);
 }

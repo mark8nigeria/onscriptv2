@@ -2,17 +2,15 @@
 
 import Image from "next/image";
 import React from "react";
-import CastCardEmbeds from "../../CastCardEmbeds";
-import { CastCardProps, PostImageSwiperProps } from "../cast-card.types";
+import CastCardEmbeds, { PostImageSwiperProps } from "../../CastCardEmbeds";
+import { CastCardProps } from "../cast-card.types";
+import { useAppSelector } from "@/utils";
 
-export default function CastCardContents({
-  text,
-  profilePic,
-  username,
-  embeds,
-}: CastCardProps) {
+export default function CastCardContents({ text, embeds }: CastCardProps) {
   const isEmbeds = Array.isArray(embeds) && embeds.length > 0;
   const castEmbedProps = { embeds } as unknown as PostImageSwiperProps;
+
+  const { profilePic, username } = useAppSelector((state) => state.user);
 
   return (
     <div className="w-full flex items-start justify-start gap-2">

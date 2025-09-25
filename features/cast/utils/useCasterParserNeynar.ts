@@ -1,11 +1,8 @@
 import { useState, useCallback } from "react";
+import { SelectMediaType } from "@/types/media.types";
+import { CastData } from "@/types/cast.types";
 
-type CastData = {
-  text: string;
-  embeds: { url: string }[];
-};
-
-export default function useCastParserNeynar() {
+export default function useCastParserNeynar(castMedia: SelectMediaType[]) {
   const [castData, setCastData] = useState<CastData>({
     text: "",
     embeds: [],
@@ -28,10 +25,10 @@ export default function useCastParserNeynar() {
 
       setCastData({
         text,
-        embeds: urls.map((u) => ({ url: u })),
+        embeds: [...urls.map((u) => ({ url: u })), ...castMedia],
       });
     },
-    [extractUrls],
+    [extractUrls, castMedia],
   );
 
   return { parseCast, castData };

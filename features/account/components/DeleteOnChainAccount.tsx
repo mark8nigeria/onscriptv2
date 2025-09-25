@@ -4,22 +4,21 @@ import ButtonAction from "@/components/ButtonAction";
 import Loader from "@/components/Loader";
 import { onscriptUserManagementAbi } from "@/constants/abis";
 import { onscriptUserManagementContractAddress } from "@/constants/contractAddresses";
-import { useRouter } from "next/navigation";
+import { setDeletedOnChainDetails } from "@/redux/user.slice";
+import { useAppDispatch, useAppSelector } from "@/utils";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
-import { useAccount, useWriteContract } from "wagmi";
+import { useWriteContract } from "wagmi";
 
-export default function DeleteOnChainAccount({ address }: { address: string }) {
-  const router = useRouter();
-  const { address: connectWalletAddress } = useAccount();
+export default function DeleteOnChainAccount() {
+  const { isError, errorStateMent } = useAppSelector((state) => state.user);
 
   const { writeContract, isPending, isSuccess } = useWriteContract();
+  const dispatch = useAppDispatch();
 
   const deleteAccount = () => {
-    if (address !== connectWalletAddress) {
-      toast.error(
-        "The connected wallet doesn’t match the one you used to create your account.",
-      );
+    if (isError) {
+      toast.error(errorStateMent);
       return;
     }
     writeContract({
@@ -32,7 +31,7 @@ export default function DeleteOnChainAccount({ address }: { address: string }) {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Your account has been deleted");
-      router.refresh();
+      dispatch(setDeletedOnChainDetails());
     }
   }, []);
 

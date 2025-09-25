@@ -23,14 +23,21 @@ export async function POST(request: Request) {
     if (!parsedData.success) {
       return NextResponse.json(
         {
-          error: parsedData.error.message,
+          error: parsedData.error.errors[0].message,
         },
         { status: 400 },
       );
     }
 
-    const { files, channelId, embeds, text, scheduledAt, status, userId } =
-      parsedData.data;
+    const {
+      channelId,
+      embeds,
+      text,
+      scheduledAt,
+      status,
+      userId,
+      pinataFilesIds,
+    } = parsedData.data;
 
     if (new Date() > scheduledAt) {
       return NextResponse.json(
@@ -57,16 +64,6 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    // embeds?.push({
-    //   url: "https://images.unsplash.com/photo-1757252800867-2e78e08a6d53",
-    // });
-
-    if (files.length > 0) {
-      //Todo: store the images in pinata
-      // embeds?.push({
-      //   url: "https://images.unsplash.com/photo-1757252800867-2e78e08a6d53",
-      // });
-    }
 
     const postData: PostSchemaDataType = {
       signerUuid: user.signerUuid,
@@ -74,8 +71,9 @@ export async function POST(request: Request) {
       text,
       userId,
       channelId,
-      embeds, // remember url to uploaded assets is to be added here
+      embeds,
       scheduledAt,
+      pinataFilesIds,
     };
 
     await db.$transaction(async (tx) => {

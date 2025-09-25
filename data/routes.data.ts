@@ -14,3 +14,5 @@ export const adminPrefix = "/admin";
 export const defaultRedirectUrl = "/dashboard";
 
 export const hideNavRoutes = ["/", "/login"];
+
+export const hideLoaderRoute = ["/", "/login"];

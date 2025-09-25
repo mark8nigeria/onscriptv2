@@ -1,11 +1,11 @@
-// const onscriptUserManagementAddressMainnet =
-//   "0x6f4068C3DFA6c2785c2fEF4BeA4d1aF9F3e91E02" as `0x${string}`;
+const onscriptUserManagementAddressMainnet =
+  "0xE4Dc79393deF1d6e4Df37c861ec5540150Add9A6" as `0x${string}`;
 const onscriptUserManagementAddressSepolia =
-  "0x0E8c4c65b65bDE99c02C2E4BB7e39Fa32F1fa467" as `0x${string}`;
+  "0x02B1B79975B2dCBFB671542F6621331a1223631f" as `0x${string}`;
 
-const onscriptUserManagementContractAddress =
-  onscriptUserManagementAddressSepolia;
 // const onscriptUserManagementContractAddress =
-//   onscriptUserManagementAddressMainnet;
+//   onscriptUserManagementAddressSepolia;
+const onscriptUserManagementContractAddress =
+  onscriptUserManagementAddressMainnet;
 
 export { onscriptUserManagementContractAddress };

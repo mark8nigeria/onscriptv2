@@ -128,6 +128,7 @@ exports.Prisma.PostScalarFieldEnum = {
   channelId: 'channelId',
   parentAuthorFid: 'parentAuthorFid',
   embeds: 'embeds',
+  pinataFilesIds: 'pinataFilesIds',
   postHash: 'postHash',
   status: 'status',
   scheduledAt: 'scheduledAt',

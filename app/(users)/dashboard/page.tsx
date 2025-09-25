@@ -3,33 +3,30 @@ import { redirect } from "next/navigation";
 import ButtonAction from "@/components/ButtonAction";
 import StatusCard from "@/components/StatusCard";
 import campaigns from "@/data/campaigns.data";
-import { scheduledCasts } from "@/data/casts.data";
-import CastCard from "@/features/cast/components/CastCard";
 import ScheduleCastNow from "@/features/cast/components/ScheduleCastNow";
-import { Archive, CalendarClock, LucideSend } from "lucide-react";
+import {
+  Archive,
+  ArrowUp,
+  CalendarClock,
+  CircleAlert,
+  LucideSend,
+} from "lucide-react";
 import React from "react";
 import { TbSpeakerphone } from "react-icons/tb";
 import { CampaignCard } from "@/features/campaign/components";
 import Link from "next/link";
-import { getAllUsersCast, getUserById } from "@/helpers/read-db";
+import { dashboardStats, getAllUserScheduledCast } from "@/helpers/read-db";
+import CastCard from "@/features/cast/components/CastCard";
+import ScheduleCast from "@/features/cast/components/ScheduleCast";
 
 export default async function Dashboard() {
   const session = await auth();
   if (!session || !session.user || !session.user.id) redirect("/login");
 
-  const { name, image, id } = session.user;
+  const { name, id } = session.user;
 
-  const casts = await getAllUsersCast(id);
-  const user = await getUserById(id);
-
-  if (!user) {
-    return (
-      <main className="text-black p-4 flex items-start justify-start flex-col w-full gap-4">
-        <h1 className="text-black">Something went wrong</h1>
-        <ButtonAction btnType="primary">Reload page</ButtonAction>
-      </main>
-    );
-  }
+  const casts = await getAllUserScheduledCast(id);
+  const stats = await dashboardStats(id);
 
   return (
     <main className="text-black p-4 flex items-start justify-start flex-col w-full gap-4">
@@ -38,10 +35,26 @@ export default async function Dashboard() {
       </h1>
 
       <section className="w-full grid grid-cols-2 gap-4">
-        <StatusCard Icon={LucideSend} value={0} text="Sent casts" />
-        <StatusCard Icon={CalendarClock} value={0} text="Queued casts" />
-        <StatusCard Icon={TbSpeakerphone} value={0} text="Active campaign" />
-        <StatusCard Icon={Archive} value={0} text="Drafts" />
+        <StatusCard
+          Icon={LucideSend}
+          value={stats?.publishedCastsCount || 0}
+          text="Published casts"
+        />
+        <StatusCard
+          Icon={CalendarClock}
+          value={stats?.scheduledCastsCount || 0}
+          text="Scheduled casts"
+        />
+        <StatusCard
+          Icon={TbSpeakerphone}
+          value={stats?.campaignCount || 0}
+          text="Active campaign"
+        />
+        <StatusCard
+          Icon={Archive}
+          value={stats?.draftCastsCount || 0}
+          text="Drafts"
+        />
       </section>
 
       <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col shadow-xl shadow-black/[0.05]">
@@ -56,37 +69,57 @@ export default async function Dashboard() {
         </div>
       </section>
 
-      <ScheduleCastNow
-        profilePic={image}
-        username={name}
-        userId={id}
-        isPremium={user.isPremium}
-        isUuidApprove={user.isUuidApprove}
-        signerUuid={user.signerUuid}
-        walletAddress={user.walletAddress}
-        fid={user.fid}
-      />
+      <ScheduleCastNow />
 
       <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col shadow-xl shadow-black/[0.05]">
-        <h3 className="font-medium text-xl capitalize text-left w-full p-4 pb-0">
-          Scheduled casts
-        </h3>
-
-        <div className="w-full grid grid-cols-1 divide-y divide-neutral-100">
-          {/* {casts?.map((cast, i) => {
-            return (
-              <CastCard key={i} {...cast} username={name} profilePic={image} />
-            );
-          })} */}
-        </div>
-
-        <div className="p-4">
+        <div className="w-full p-4 pb-0 flex items-center justify-between">
+          <h3 className="font-medium text-xl capitalize text-left">
+            Scheduled casts
+          </h3>
           <Link href={"/casts"}>
-            <ButtonAction btnType="primary" className="w-fit px-8">
-              See all
+            <ButtonAction
+              btnType="badge"
+              className="w-fit flex items-center justify-center gap-2"
+            >
+              <p className="text-nowrap capitalize">See all</p>
+              <ArrowUp className="size-4 rotate-45" />
             </ButtonAction>
           </Link>
         </div>
+
+        {!casts && (
+          <div className="p-4 w-full">
+            <div className="p-8 border border-neutral-200 rounded-3xl flex items-center justify-center gap-4 flex-col w-full">
+              <div className="border border-neutral-100 p-4 rounded-full">
+                <CircleAlert className="size-8" />
+              </div>
+              <p className="text-center text-neutral-700">
+                {"Something went wrong"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {casts && casts.length === 0 && (
+          <div className="p-4 w-full">
+            <div className="p-8 border border-neutral-200 rounded-3xl flex items-center justify-center gap-4 flex-col w-full">
+              <div className="border border-neutral-100 p-4 rounded-full">
+                <LucideSend className="size-8" />
+              </div>
+              <p className="text-center text-neutral-700">
+                {"You don't have any cast recorded yet"}
+              </p>
+              <ScheduleCast />
+            </div>
+          </div>
+        )}
+        {casts && casts.length > 0 && (
+          <div className="w-full grid grid-cols-1 divide-y divide-neutral-100">
+            {casts?.map((cast, i) => {
+              return <CastCard key={i} {...cast} />;
+            })}
+          </div>
+        )}
       </section>
     </main>
   );

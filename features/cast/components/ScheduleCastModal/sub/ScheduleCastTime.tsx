@@ -13,11 +13,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import TimePickerCombined from "@/components/TimePickerCombined";
 import { toast } from "sonner";
+import Loader from "@/components/Loader";
+import { useAppSelector } from "@/utils";
 
 type ScheduleCastTimeProps = {
   isSetPublishTimeOpen: boolean;
   setIsSetPublishTimeOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  finalData: {
+  castData: {
     embeds: {
       url: string;
     }[];
@@ -25,26 +27,26 @@ type ScheduleCastTimeProps = {
   };
   handleSchedulePublish: (date: Date, userId: string) => Promise<void>;
   isLoading: boolean;
-  userId: string;
 };
 
 export default function ScheduleCastTime({
   isSetPublishTimeOpen,
   setIsSetPublishTimeOpen,
-  finalData,
+  castData,
   handleSchedulePublish,
   isLoading,
-  userId,
 }: ScheduleCastTimeProps) {
   const [date, setDate] = useState<Date>();
   const [period, setPeriod] = React.useState<Period>("AM");
 
+  const { id } = useAppSelector((state) => state.user);
+
   const handleSubmit = () => {
-    console.log("finalData", finalData);
     if (
       isLoading ||
       !date ||
-      (finalData.text.length === 0 && finalData.embeds.length === 0)
+      (castData.text.length === 0 && castData.embeds.length === 0) ||
+      !id
     )
       return;
     if (new Date() > date) {
@@ -52,58 +54,56 @@ export default function ScheduleCastTime({
       return;
     }
 
-    handleSchedulePublish(date, userId);
+    handleSchedulePublish(date, id);
   };
 
   return (
-    isSetPublishTimeOpen && (
-      <AlertDialog
-        open={isSetPublishTimeOpen}
-        onOpenChange={setIsSetPublishTimeOpen}
-      >
-        <AlertDialogContent className="w-[calc(100%-4rem)] max-h-[calc(100%-4rem)] overflow-y-auto !rounded-3xl p-0 !border-none">
-          <div className="relative z-[100] bg-white rounded-2xl p-4 space-y-8">
-            <div className="flex items-center justify-between gap-4">
-              <AlertDialogTitle className="text-xl text-left font-medium text-black">
-                Set publish time
-              </AlertDialogTitle>
-              <AlertDialogDescription className="hidden">
-                Set publish time
-              </AlertDialogDescription>
-              <ButtonAction
-                disabled={isLoading}
-                onClick={() => setIsSetPublishTimeOpen(false)}
-                btnType="badge"
-                className="px-2"
-              >
-                <Plus className="size-4 rotate-45 text-black" />
-              </ButtonAction>
-            </div>
-
-            <div className="space-y-6">
-              <DatePicker
-                disabled={isLoading}
-                onChange={(date) => {
-                  setDate(date);
-                  setPeriod("AM");
-                }}
-              />
-
-              <TimePickerCombined
-                disabled={!date || isLoading}
-                date={date}
-                setDate={setDate}
-                period={period}
-                setPeriod={setPeriod}
-              />
-
-              <ButtonAction btnType="primary" onClick={handleSubmit}>
-                {isLoading ? "Scheduling..." : "Schedule Cast"}
-              </ButtonAction>
-            </div>
+    <AlertDialog
+      open={isSetPublishTimeOpen}
+      onOpenChange={setIsSetPublishTimeOpen}
+    >
+      <AlertDialogContent className="w-[calc(100%-4rem)] max-h-[calc(100%-4rem)] overflow-y-auto !rounded-3xl p-0 !border-none">
+        <div className="relative z-[100] bg-white rounded-2xl p-4 space-y-8">
+          <div className="flex items-center justify-between gap-4">
+            <AlertDialogTitle className="text-xl text-left font-medium text-black">
+              Set publish time
+            </AlertDialogTitle>
+            <AlertDialogDescription className="hidden">
+              Set publish time
+            </AlertDialogDescription>
+            <ButtonAction
+              disabled={isLoading}
+              onClick={() => setIsSetPublishTimeOpen(false)}
+              btnType="badge"
+              className="px-2"
+            >
+              <Plus className="size-4 rotate-45 text-black" />
+            </ButtonAction>
           </div>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
+
+          <div className="space-y-6">
+            <DatePicker
+              disabled={isLoading}
+              onChange={(date) => {
+                setDate(date);
+                setPeriod("AM");
+              }}
+            />
+
+            <TimePickerCombined
+              disabled={!date || isLoading}
+              date={date}
+              setDate={setDate}
+              period={period}
+              setPeriod={setPeriod}
+            />
+
+            <ButtonAction btnType="primary" onClick={handleSubmit}>
+              {isLoading ? "Scheduling..." : "Schedule Cast"}
+            </ButtonAction>
+          </div>
+        </div>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

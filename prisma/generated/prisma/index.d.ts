@@ -2149,6 +2149,7 @@ export namespace Prisma {
     channelId: number
     parentAuthorFid: number
     embeds: number
+    pinataFilesIds: number
     postHash: number
     status: number
     scheduledAt: number
@@ -2211,6 +2212,7 @@ export namespace Prisma {
     channelId?: true
     parentAuthorFid?: true
     embeds?: true
+    pinataFilesIds?: true
     postHash?: true
     status?: true
     scheduledAt?: true
@@ -2316,6 +2318,7 @@ export namespace Prisma {
     channelId: string | null
     parentAuthorFid: number | null
     embeds: JsonValue | null
+    pinataFilesIds: string[]
     postHash: string | null
     status: $Enums.PostStatus
     scheduledAt: Date | null
@@ -2353,6 +2356,7 @@ export namespace Prisma {
     channelId?: boolean
     parentAuthorFid?: boolean
     embeds?: boolean
+    pinataFilesIds?: boolean
     postHash?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -2372,6 +2376,7 @@ export namespace Prisma {
     channelId?: boolean
     parentAuthorFid?: boolean
     embeds?: boolean
+    pinataFilesIds?: boolean
     postHash?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -2391,6 +2396,7 @@ export namespace Prisma {
     channelId?: boolean
     parentAuthorFid?: boolean
     embeds?: boolean
+    pinataFilesIds?: boolean
     postHash?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -2410,6 +2416,7 @@ export namespace Prisma {
     channelId?: boolean
     parentAuthorFid?: boolean
     embeds?: boolean
+    pinataFilesIds?: boolean
     postHash?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -2420,7 +2427,7 @@ export namespace Prisma {
     userId?: boolean
   }
 
-  export type PostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "signerUuid" | "text" | "parent" | "channelId" | "parentAuthorFid" | "embeds" | "postHash" | "status" | "scheduledAt" | "publishedAt" | "qstashMessageId" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["post"]>
+  export type PostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "signerUuid" | "text" | "parent" | "channelId" | "parentAuthorFid" | "embeds" | "pinataFilesIds" | "postHash" | "status" | "scheduledAt" | "publishedAt" | "qstashMessageId" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["post"]>
   export type PostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2444,6 +2451,7 @@ export namespace Prisma {
       channelId: string | null
       parentAuthorFid: number | null
       embeds: Prisma.JsonValue | null
+      pinataFilesIds: string[]
       postHash: string | null
       status: $Enums.PostStatus
       scheduledAt: Date | null
@@ -2883,6 +2891,7 @@ export namespace Prisma {
     readonly channelId: FieldRef<"Post", 'String'>
     readonly parentAuthorFid: FieldRef<"Post", 'Int'>
     readonly embeds: FieldRef<"Post", 'Json'>
+    readonly pinataFilesIds: FieldRef<"Post", 'String[]'>
     readonly postHash: FieldRef<"Post", 'String'>
     readonly status: FieldRef<"Post", 'PostStatus'>
     readonly scheduledAt: FieldRef<"Post", 'DateTime'>
@@ -15724,6 +15733,7 @@ export namespace Prisma {
     channelId: 'channelId',
     parentAuthorFid: 'parentAuthorFid',
     embeds: 'embeds',
+    pinataFilesIds: 'pinataFilesIds',
     postHash: 'postHash',
     status: 'status',
     scheduledAt: 'scheduledAt',
@@ -16229,6 +16239,7 @@ export namespace Prisma {
     channelId?: StringNullableFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableFilter<"Post"> | number | null
     embeds?: JsonNullableFilter<"Post">
+    pinataFilesIds?: StringNullableListFilter<"Post">
     postHash?: StringNullableFilter<"Post"> | string | null
     status?: EnumPostStatusFilter<"Post"> | $Enums.PostStatus
     scheduledAt?: DateTimeNullableFilter<"Post"> | Date | string | null
@@ -16248,6 +16259,7 @@ export namespace Prisma {
     channelId?: SortOrderInput | SortOrder
     parentAuthorFid?: SortOrderInput | SortOrder
     embeds?: SortOrderInput | SortOrder
+    pinataFilesIds?: SortOrder
     postHash?: SortOrderInput | SortOrder
     status?: SortOrder
     scheduledAt?: SortOrderInput | SortOrder
@@ -16272,6 +16284,7 @@ export namespace Prisma {
     channelId?: StringNullableFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableFilter<"Post"> | number | null
     embeds?: JsonNullableFilter<"Post">
+    pinataFilesIds?: StringNullableListFilter<"Post">
     status?: EnumPostStatusFilter<"Post"> | $Enums.PostStatus
     scheduledAt?: DateTimeNullableFilter<"Post"> | Date | string | null
     publishedAt?: DateTimeNullableFilter<"Post"> | Date | string | null
@@ -16289,6 +16302,7 @@ export namespace Prisma {
     channelId?: SortOrderInput | SortOrder
     parentAuthorFid?: SortOrderInput | SortOrder
     embeds?: SortOrderInput | SortOrder
+    pinataFilesIds?: SortOrder
     postHash?: SortOrderInput | SortOrder
     status?: SortOrder
     scheduledAt?: SortOrderInput | SortOrder
@@ -16315,6 +16329,7 @@ export namespace Prisma {
     channelId?: StringNullableWithAggregatesFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableWithAggregatesFilter<"Post"> | number | null
     embeds?: JsonNullableWithAggregatesFilter<"Post">
+    pinataFilesIds?: StringNullableListFilter<"Post">
     postHash?: StringNullableWithAggregatesFilter<"Post"> | string | null
     status?: EnumPostStatusWithAggregatesFilter<"Post"> | $Enums.PostStatus
     scheduledAt?: DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
@@ -17400,6 +17415,7 @@ export namespace Prisma {
     channelId?: string | null
     parentAuthorFid?: number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostCreatepinataFilesIdsInput | string[]
     postHash?: string | null
     status?: $Enums.PostStatus
     scheduledAt?: Date | string | null
@@ -17418,6 +17434,7 @@ export namespace Prisma {
     channelId?: string | null
     parentAuthorFid?: number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostCreatepinataFilesIdsInput | string[]
     postHash?: string | null
     status?: $Enums.PostStatus
     scheduledAt?: Date | string | null
@@ -17436,6 +17453,7 @@ export namespace Prisma {
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostUpdatepinataFilesIdsInput | string[]
     postHash?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17454,6 +17472,7 @@ export namespace Prisma {
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostUpdatepinataFilesIdsInput | string[]
     postHash?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17472,6 +17491,7 @@ export namespace Prisma {
     channelId?: string | null
     parentAuthorFid?: number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostCreatepinataFilesIdsInput | string[]
     postHash?: string | null
     status?: $Enums.PostStatus
     scheduledAt?: Date | string | null
@@ -17490,6 +17510,7 @@ export namespace Prisma {
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostUpdatepinataFilesIdsInput | string[]
     postHash?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17507,6 +17528,7 @@ export namespace Prisma {
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostUpdatepinataFilesIdsInput | string[]
     postHash?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18818,6 +18840,14 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type EnumPostStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.PostStatus | EnumPostStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PostStatus[] | ListEnumPostStatusFieldRefInput<$PrismaModel>
@@ -18865,6 +18895,7 @@ export namespace Prisma {
     channelId?: SortOrder
     parentAuthorFid?: SortOrder
     embeds?: SortOrder
+    pinataFilesIds?: SortOrder
     postHash?: SortOrder
     status?: SortOrder
     scheduledAt?: SortOrder
@@ -19999,6 +20030,10 @@ export namespace Prisma {
     _max?: NestedEnumSecuritySeverityFilter<$PrismaModel>
   }
 
+  export type PostCreatepinataFilesIdsInput = {
+    set: string[]
+  }
+
   export type UserCreateNestedOneWithoutPostsInput = {
     create?: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
     connectOrCreate?: UserCreateOrConnectWithoutPostsInput
@@ -20019,6 +20054,11 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type PostUpdatepinataFilesIdsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type EnumPostStatusFieldUpdateOperationsInput = {
@@ -21434,6 +21474,7 @@ export namespace Prisma {
     channelId?: string | null
     parentAuthorFid?: number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostCreatepinataFilesIdsInput | string[]
     postHash?: string | null
     status?: $Enums.PostStatus
     scheduledAt?: Date | string | null
@@ -21451,6 +21492,7 @@ export namespace Prisma {
     channelId?: string | null
     parentAuthorFid?: number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostCreatepinataFilesIdsInput | string[]
     postHash?: string | null
     status?: $Enums.PostStatus
     scheduledAt?: Date | string | null
@@ -21825,6 +21867,7 @@ export namespace Prisma {
     channelId?: StringNullableFilter<"Post"> | string | null
     parentAuthorFid?: IntNullableFilter<"Post"> | number | null
     embeds?: JsonNullableFilter<"Post">
+    pinataFilesIds?: StringNullableListFilter<"Post">
     postHash?: StringNullableFilter<"Post"> | string | null
     status?: EnumPostStatusFilter<"Post"> | $Enums.PostStatus
     scheduledAt?: DateTimeNullableFilter<"Post"> | Date | string | null
@@ -24043,6 +24086,7 @@ export namespace Prisma {
     channelId?: string | null
     parentAuthorFid?: number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostCreatepinataFilesIdsInput | string[]
     postHash?: string | null
     status?: $Enums.PostStatus
     scheduledAt?: Date | string | null
@@ -24180,6 +24224,7 @@ export namespace Prisma {
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostUpdatepinataFilesIdsInput | string[]
     postHash?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24197,6 +24242,7 @@ export namespace Prisma {
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostUpdatepinataFilesIdsInput | string[]
     postHash?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24214,6 +24260,7 @@ export namespace Prisma {
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     parentAuthorFid?: NullableIntFieldUpdateOperationsInput | number | null
     embeds?: NullableJsonNullValueInput | InputJsonValue
+    pinataFilesIds?: PostUpdatepinataFilesIdsInput | string[]
     postHash?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

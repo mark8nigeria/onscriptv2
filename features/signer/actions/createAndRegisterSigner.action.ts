@@ -58,17 +58,17 @@ export const createAndRegisterSigner = async (): CreateSignerReturn => {
       return { error: "User not found" };
     }
 
-    const isUserPremium = await publicClient.readContract({
+    const isUserRegistered = await publicClient.readContract({
       address: onscriptUserManagementContractAddress,
       abi: onscriptUserManagementAbi,
-      functionName: "getIsUserPremium",
+      functionName: "getIsUserRegistered",
       args: [user.walletAddress],
     });
 
-    if (typeof isUserPremium !== "boolean") {
+    if (typeof isUserRegistered !== "boolean") {
       return { error: "Something went wrong" };
     }
-    if (!isUserPremium) {
+    if (!isUserRegistered) {
       return {
         error: "Only premium users can create a signer",
       };

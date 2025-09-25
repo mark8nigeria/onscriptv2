@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       const data = await res.json();
+
       return NextResponse.json({ error: data.message }, { status: 400 });
     }
 

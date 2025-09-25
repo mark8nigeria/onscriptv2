@@ -8,7 +8,6 @@ import Loader from "@/components/Loader";
 import RequestSignatureQrModal from "./RequestSignatureQrModal";
 
 export default function RequestSignature() {
-  const [initiateSignerErr, setInitiateSignerErr] = useState<string>();
   const [deeplinkUrl, setDeeplinkUrl] = useState<string>();
   const [signerUuid, setSignerUuid] = useState<string>();
   const [isPolling, setIsPolling] = useState(false);
@@ -21,7 +20,6 @@ export default function RequestSignature() {
       const res = await createAndRegisterSigner();
       if ("error" in res) {
         toast.error(res.error);
-        setInitiateSignerErr(res.error);
         return;
       }
 
@@ -72,18 +70,14 @@ export default function RequestSignature() {
   }, [isPolling, signerUuid]);
 
   return (
-    <section className="w-full bg-white rounded-3xl flex items-center justify-center flex-col gap-8 shadow-xl shadow-black/[0.05] p-4">
-      <div className="flex flex-col items-center justify-center gap-8 p-4">
-        {initiateSignerErr && <p>{initiateSignerErr}</p>}
-
-        <ButtonAction
-          btnType="primary"
-          disabled={isPending}
-          onClick={() => handleRequestSigner()}
-        >
-          {isPending ? "Fetching link..." : "Request Signature"}
-        </ButtonAction>
-      </div>
+    <section className="w-full">
+      <ButtonAction
+        btnType="primary"
+        disabled={isPending}
+        onClick={() => handleRequestSigner()}
+      >
+        {isPending ? "Fetching link..." : "Request Signature"}
+      </ButtonAction>
 
       <Loader isLoading={isPending} />
       <RequestSignatureQrModal

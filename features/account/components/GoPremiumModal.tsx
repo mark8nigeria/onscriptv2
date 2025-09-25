@@ -10,32 +10,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { BadgeCheck, Plus } from "lucide-react";
 import ButtonAction from "@/components/ButtonAction";
-import { useGoPremium, useIsAddressOnChainAndPremium } from "@/utils";
+import { useAppSelector, useGoPremium } from "@/utils";
 import Loader from "@/components/Loader";
 import { premiumFeatures } from "@/data/premiumFeatures.data";
 
-type ComeOnchainAndGoPremiumProps = {
+type GoPremiumProps = {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  comeOnchain?: boolean;
-  goPremium?: boolean;
-  comeOnchainAndGoPremium?: boolean;
-  address: string;
-  fid: number;
-  setIsRequestSignerModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  onSuccess?: () => void;
 };
 
-export default function ComeOnchainAndGoPremium({
+export default function GoPremiumModal({
   isModalOpen,
   setIsModalOpen,
-  address,
-  fid,
-  setIsRequestSignerModalOpen,
-}: ComeOnchainAndGoPremiumProps) {
-  const { isUserOnChainAndPremium, isLoading } = useIsAddressOnChainAndPremium({
-    address,
-  });
-  const { goPremium, isPending, isSuccess } = useGoPremium({ address, fid });
+  onSuccess,
+}: GoPremiumProps) {
+  const { isUserPremium } = useAppSelector((state) => state.user);
+  const { goPremium, isPending, isSuccess } = useGoPremium();
 
   const handleBtnClick = () => {
     goPremium();
@@ -45,9 +36,9 @@ export default function ComeOnchainAndGoPremium({
   useEffect(() => {
     if (isSuccess) {
       setIsModalOpen(false);
-      if (setIsRequestSignerModalOpen) setIsRequestSignerModalOpen(true);
+      if (onSuccess) onSuccess();
     }
-  }, [isSuccess, setIsRequestSignerModalOpen]);
+  }, [isSuccess]);
 
   return (
     <>
@@ -113,7 +104,7 @@ export default function ComeOnchainAndGoPremium({
 
                 <ButtonAction
                   onClick={handleBtnClick}
-                  disabled={isUserOnChainAndPremium}
+                  disabled={isUserPremium}
                   btnType="primary"
                 >
                   Go premium for $1 ETH
@@ -124,7 +115,7 @@ export default function ComeOnchainAndGoPremium({
         </AlertDialogContent>
       </AlertDialog>
 
-      <Loader isLoading={isLoading || isPending} />
+      <Loader isLoading={isPending} />
     </>
   );
 }

@@ -2,19 +2,18 @@ import React from "react";
 import CastCardEmbeds from "../CastCardEmbeds";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { type CastData } from "@/types/cast.types";
+import { useAppSelector } from "@/utils";
 
 type CastPreviewProps = {
-  embeds: {
-    url: string;
-  }[];
-  text: string;
-  username: string | null | undefined;
-  profilePic: string | null | undefined;
   className?: string;
+  castData: CastData;
 };
 
 export default function CastPreview(props: CastPreviewProps) {
-  const { className, embeds, profilePic, text, username } = props;
+  const { className, castData } = props;
+  const { embeds, text } = castData;
+  const { username, profilePic } = useAppSelector((state) => state.user);
 
   return (
     <div

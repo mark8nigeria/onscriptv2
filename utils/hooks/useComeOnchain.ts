@@ -2,32 +2,30 @@
 
 import { onscriptUserManagementAbi } from "@/constants/abis";
 import { onscriptUserManagementContractAddress } from "@/constants/contractAddresses";
-import { useIsAddressOnChainAndPremium } from "@/utils";
+import { setUserIsOnchain } from "@/redux/user.slice";
+import { useAppDispatch, useAppSelector } from "@/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { useAccount } from "wagmi";
 import { useWriteContract } from "wagmi";
 
-type OnchainAccountProps = {
-  fid: number;
-  address: string;
-};
+export default function useComeOnchain() {
+  const dispatch = useAppDispatch();
+  const { fid, isError, errorStateMent, isLoading, isUserOnChain } =
+    useAppSelector((state) => state.user);
 
-export default function useComeOnchain({ fid, address }: OnchainAccountProps) {
-  const { address: connectWalletAddress } = useAccount(); //0x3097139c11366006F73Fd357c1F2489d8CF3B96A
-  const { isUserOnChain, refresh, isLoading } = useIsAddressOnChainAndPremium({
-    address,
-  });
-
-  const { writeContract, isPending, isSuccess, isError } = useWriteContract();
+  const {
+    writeContract,
+    isPending,
+    isSuccess,
+    isError: writeError,
+  } = useWriteContract();
 
   const comeOnchain = () => {
-    if (connectWalletAddress !== address) {
-      toast.error(
-        "The connected wallet doesn’t match the one you used to create your account.",
-      );
+    if (isError) {
+      toast.error(errorStateMent);
       return;
     }
+
     if (isLoading) return;
 
     if (isUserOnChain) {
@@ -47,17 +45,17 @@ export default function useComeOnchain({ fid, address }: OnchainAccountProps) {
     async function handleSuccess() {
       if (isSuccess) {
         toast.success("You're onchain");
-        await refresh();
+        dispatch(setUserIsOnchain(true));
       }
     }
     handleSuccess();
   }, [isSuccess]);
 
   useEffect(() => {
-    if (isError) {
+    if (writeError) {
       toast.error("Something went wrong");
     }
-  }, [isError]);
+  }, [writeError]);
 
   return { comeOnchain, isPending, isSuccess, isError };
 }

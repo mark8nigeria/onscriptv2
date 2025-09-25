@@ -11,7 +11,7 @@ export default async function AccountPage() {
   const session = await auth();
   if (!session || !session.user || !session.user.id) redirect("/login");
 
-  const { id } = session.user;
+  const { id, role } = session.user;
   const user = await getUserById(id);
 
   if (!user) {
@@ -21,8 +21,6 @@ export default async function AccountPage() {
       </main>
     );
   }
-
-  const { fid, isPremium, username, pfpUrl, role } = user;
 
   return (
     <main className="text-black p-4 flex items-start justify-start flex-col w-full gap-4">
@@ -39,15 +37,7 @@ export default async function AccountPage() {
         )}
       </div>
 
-      <AccountDetails
-        name={username}
-        image={pfpUrl}
-        isPremium={isPremium}
-        fid={fid}
-        role={role}
-        address={user.walletAddress}
-      />
-
+      <AccountDetails />
       <RequestSignature />
     </main>
   );

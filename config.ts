@@ -1,12 +1,15 @@
 // @noErrors: 2554
 import { createConfig, http } from "wagmi";
-import { base, baseSepolia } from "wagmi/chains";
+import {
+  base,
+  // baseSepolia,
+} from "wagmi/chains";
 import { coinbaseWallet } from "wagmi/connectors";
 
 export const wagmiConfig = createConfig({
   chains: [
-    // base,
-    baseSepolia,
+    base,
+    // baseSepolia,
   ],
   connectors: [
     coinbaseWallet({
@@ -15,7 +18,7 @@ export const wagmiConfig = createConfig({
   ],
   ssr: true,
   transports: {
-    // [base.id]: http(),
-    [baseSepolia.id]: http(),
+    [base.id]: http(),
+    // [baseSepolia.id]: http(),
   },
 });

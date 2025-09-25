@@ -4,17 +4,10 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { cn } from "@/lib/utils";
 import UrlEmbedCard from "@/components/UrlEmbedCard";
+import { SelectMediaType } from "@/types/media.types";
 
 export type PostImageSwiperProps = {
-  embeds: {
-    cast_id?:
-      | {
-          hash: string;
-          fid: number;
-        }
-      | undefined;
-    url?: string | undefined;
-  }[];
+  embeds: SelectMediaType[];
 };
 
 export default function CastCardEmbeds({ embeds }: PostImageSwiperProps) {
@@ -27,7 +20,7 @@ export default function CastCardEmbeds({ embeds }: PostImageSwiperProps) {
         slidesPerView={"auto"}
         className="rounded-xl overflow-hidden w-full"
       >
-        {embeds.map(({ url }, i, arr) => {
+        {embeds.map(({ url, type }, i, arr) => {
           if (!url) return null;
 
           return (
@@ -37,7 +30,7 @@ export default function CastCardEmbeds({ embeds }: PostImageSwiperProps) {
                 "!w-[90%] aspect-[5/4]": arr.length > 1,
               })}
             >
-              <UrlEmbedCard url={url} />
+              <UrlEmbedCard url={url} type={type} />
             </SwiperSlide>
           );
         })}
