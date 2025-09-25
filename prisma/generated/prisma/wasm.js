@@ -122,10 +122,18 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
-  title: 'title',
-  content: 'content',
-  publishDate: 'publishDate',
+  signerUuid: 'signerUuid',
+  text: 'text',
+  parent: 'parent',
+  channelId: 'channelId',
+  parentAuthorFid: 'parentAuthorFid',
+  embeds: 'embeds',
+  pinataFilesIds: 'pinataFilesIds',
+  postHash: 'postHash',
   status: 'status',
+  scheduledAt: 'scheduledAt',
+  publishedAt: 'publishedAt',
+  qstashMessageId: 'qstashMessageId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -307,9 +315,20 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 
 exports.Prisma.NullsOrder = {
@@ -319,7 +338,8 @@ exports.Prisma.NullsOrder = {
 exports.PostStatus = exports.$Enums.PostStatus = {
   DRAFT: 'DRAFT',
   SCHEDULED: 'SCHEDULED',
-  PUBLISHED: 'PUBLISHED'
+  PUBLISHED: 'PUBLISHED',
+  FAILED: 'FAILED'
 };
 
 exports.UserRole = exports.$Enums.UserRole = {

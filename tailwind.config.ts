@@ -51,6 +51,9 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        error: "hsl(var(--error))",
       },
       animation: {
         "fade-out": "1s fadeOut 3s ease-out forwards",

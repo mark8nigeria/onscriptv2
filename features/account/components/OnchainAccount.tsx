@@ -2,70 +2,20 @@
 
 import ButtonAction from "@/components/ButtonAction";
 import Loader from "@/components/Loader";
-import { onscriptUserManagementAbi } from "@/constants/abis";
-import { onscriptUserManagementAddressMainnet } from "@/constants/contractAddresses";
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useAccount, useReadContract } from "wagmi";
-import { useWriteContract } from "wagmi";
+import { useAppSelector, useComeOnchain } from "@/utils";
+import DeleteOnChainAccount from "@/features/account/components/DeleteOnChainAccount";
 
-type OnchainAccountProps = {
-  fid: number;
-};
-
-export default function OnchainAccount({ fid }: OnchainAccountProps) {
-  const [isUserDataOnChian, setIsUserDataOnChian] = useState(false);
-  const { address } = useAccount();
-  const { data, isLoading, isError } = useReadContract({
-    address: onscriptUserManagementAddressMainnet,
-    abi: onscriptUserManagementAbi,
-    functionName: "getUserFid",
-    args: [address],
-  });
-
-  const {
-    writeContract,
-    isPending,
-    isSuccess,
-    isError: isWriteError,
-  } = useWriteContract();
-
-  const comeOnchain = () => {
-    writeContract({
-      address: onscriptUserManagementAddressMainnet,
-      abi: onscriptUserManagementAbi,
-      functionName: "registerUser",
-      args: [fid],
-    });
-  };
-
-  useEffect(() => {
-    if (typeof data === "bigint") {
-      setIsUserDataOnChian(data > BigInt(0));
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setIsUserDataOnChian(true);
-      toast.success("You're onchain");
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    if (isWriteError) {
-      toast.error("Something went wrong");
-    }
-  }, [isWriteError]);
+export default function OnchainAccount() {
+  const { isUserOnChain, isError } = useAppSelector((state) => state.user);
+  const { comeOnchain, isPending } = useComeOnchain();
 
   return (
-    <div>
-      {isLoading && <p>Loading...</p>}
-      {isError && <p>Error</p>}
-      <div>
-        {!isLoading && !isError && (
-          <>
-            {isUserDataOnChian ? (
+    <>
+      <div className="space-y-8">
+        {isError && <p>Error</p>}
+        <div>
+          {!isError &&
+            (isUserOnChain ? (
               <p>You're onchain</p>
             ) : (
               <div className="flex flex-col items-center justify-center gap-2">
@@ -78,10 +28,12 @@ export default function OnchainAccount({ fid }: OnchainAccountProps) {
                   {isPending ? <Loader isLoading /> : "Come onchain"}
                 </ButtonAction>
               </div>
-            )}
-          </>
-        )}
+            ))}
+        </div>
+
+        <DeleteOnChainAccount />
       </div>
-    </div>
+      <Loader isLoading={isPending} />
+    </>
   );
 }

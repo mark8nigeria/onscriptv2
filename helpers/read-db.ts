@@ -1,30 +1,103 @@
+import "server-only";
+
 import { db } from "@/lib/db";
 
 export const getUserByAddress = async (address: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      walletAddress: address,
-    },
-  });
-  return user;
+  try {
+    return await db.user.findUnique({
+      where: {
+        walletAddress: address,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user by address:", error);
+    return null;
+  }
 };
 
 export const getUserById = async (id: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      id,
-    },
-  });
-  return user;
+  try {
+    return await db.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user by id:", error);
+    return null;
+  }
 };
 
 export const getUserByFid = async (fid: number) => {
-  const user = await db.user.findUnique({
-    where: {
-      fid,
-    },
-  });
-  return user;
+  try {
+    return await db.user.findUnique({
+      where: {
+        fid,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user by fid:", error);
+    return null;
+  }
+};
+
+export const getPostByQstashMessageId = async (qstashMessageId: string) => {
+  try {
+    return await db.post.findUnique({
+      where: {
+        qstashMessageId,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching post by qstashMessageId:", error);
+    return null;
+  }
+};
+
+export const getPostById = async (id: string) => {
+  try {
+    return await db.post.findUnique({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching post by id:", error);
+    return null;
+  }
+};
+
+export const getAllUserCast = async (userId: string) => {
+  try {
+    return await db.post.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching casts by userId:", error);
+    return null;
+  }
+};
+
+export const getAllUserScheduledCast = async (userId: string) => {
+  try {
+    return await db.post.findMany({
+      where: {
+        userId,
+        status: "SCHEDULED",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching casts by userId:", error);
+    return null;
+  }
 };
 
 export const getAllCinematicStreakParticipants = async () => {
@@ -42,4 +115,44 @@ export const numberOfUnapprovedStreakParticipants = async () => {
     },
   });
   return unapprovedCount;
+};
+
+export const dashboardStats = async (userId: string) => {
+  try {
+    const publishedCastsCount = await db.post.count({
+      where: {
+        userId,
+        status: "PUBLISHED",
+      },
+    });
+
+    const scheduledCastsCount = await db.post.count({
+      where: {
+        userId,
+        status: "SCHEDULED",
+      },
+    });
+
+    const draftCastsCount = await db.post.count({
+      where: {
+        userId,
+        status: "DRAFT",
+      },
+    });
+
+    const campaignCount = await db.launchCampaignParticipants.count({
+      where: {
+        userId,
+      },
+    });
+
+    return {
+      publishedCastsCount,
+      scheduledCastsCount,
+      draftCastsCount,
+      campaignCount,
+    };
+  } catch {
+    return null;
+  }
 };

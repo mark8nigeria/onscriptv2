@@ -1,8 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
 import { useAccount } from "wagmi";
-import { useAppDispatch } from "@/utils";
-import { setUser } from "@/redux/user.slice";
 import { useRouter } from "next/navigation";
 import { useAuthenticate } from "@coinbase/onchainkit/minikit";
 import crypto from "crypto";
@@ -15,7 +13,6 @@ export default function useLogin() {
   const [isError, setIsError] = useState<string>();
 
   const { address } = useAccount();
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const generateNonce = useCallback((length = 32) => {
@@ -73,6 +70,17 @@ export default function useLogin() {
       const response = await fetch(`/api/user?address=${address}`);
       if (response.ok) {
         const nonce = generateNonce();
+
+        // const loginResponse = await signIn("credentials", {
+        //   ...{
+        //     message: "this is a random message",
+        //     signature: "this is a random signature",
+        //     nonce,
+        //     address,
+        //   },
+        //   redirectTo: defaultRedirectUrl,
+        // });
+
         const result = await signInViaFarcaster({ nonce });
 
         if (result) {
@@ -153,7 +161,6 @@ export default function useLogin() {
           ...credentials,
           redirectTo: defaultRedirectUrl,
         });
-        dispatch(setUser(user));
 
         console.log("/dashboard");
         router.push("/dashboard");

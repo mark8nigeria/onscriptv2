@@ -1,16 +1,8 @@
 import { CalendarClock } from "lucide-react";
 import React from "react";
-import ScheduleCastModal from "./ScheduleCastModal";
+import ScheduleCast from "./ScheduleCast";
 
-type ScheduleCastNowProps = {
-  profilePic?: string | null;
-  username?: string | null;
-};
-
-export default function ScheduleCastNow({
-  profilePic,
-  username,
-}: ScheduleCastNowProps) {
+export default function ScheduleCastNow() {
   return (
     <div className="w-full bg-white p-8 rounded-3xl flex items-center justify-center gap-4 flex-col shadow-xl shadow-black/[0.05]">
       <div className="border border-neutral-100 p-4 rounded-full">
@@ -23,7 +15,7 @@ export default function ScheduleCastNow({
         </p>
       </div>
 
-      <ScheduleCastModal profilePic={profilePic} username={username} />
+      <ScheduleCast />
     </div>
   );
 }

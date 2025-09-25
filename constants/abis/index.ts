@@ -1,3 +1,3 @@
-import onscriptUserManagementAbi from "./onscriptUserManagementAbi";
+import { onscriptUserManagementAbi } from "./onscriptUserManagementAbi";
 
 export { onscriptUserManagementAbi };

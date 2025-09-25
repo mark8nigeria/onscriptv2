@@ -13,16 +13,35 @@ datasource db {
   // directUrl = env("DIRECT_URL")
 }
 
-model Post {
-  id          String     @id @default(cuid())
-  title       String
-  content     String
-  publishDate DateTime
-  status      PostStatus @default(DRAFT)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  FAILED
+}
 
-  // User association
+model Post {
+  id String @id @default(cuid())
+
+  signerUuid      String
+  text            String
+  parent          String?
+  channelId       String?
+  parentAuthorFid Int?
+
+  embeds         Json?
+  pinataFilesIds String[] @default([])
+  postHash       String?  @unique
+
+  status      PostStatus @default(DRAFT)
+  scheduledAt DateTime?
+  publishedAt DateTime?
+
+  qstashMessageId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -219,12 +238,6 @@ model Participation {
   campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum PostStatus {
-  DRAFT
-  SCHEDULED
-  PUBLISHED
 }
 
 enum CampaignFrequency {

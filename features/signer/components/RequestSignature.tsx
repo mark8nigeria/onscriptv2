@@ -1,50 +1,65 @@
 "use client";
 
 import ButtonAction from "@/components/ButtonAction";
-import React, { useCallback, useEffect, useState } from "react";
-import QRCode from "react-qr-code";
+import React, { useEffect, useState, useTransition } from "react";
+import { checkSignerStatus, createAndRegisterSigner } from "../actions";
+import { toast } from "sonner";
+import Loader from "@/components/Loader";
+import RequestSignatureQrModal from "./RequestSignatureQrModal";
 
-type RequestSignatureProps = {
-  id: string;
-};
-
-export default function RequestSignature({ id }: RequestSignatureProps) {
-  const [isFetching, setIsFetching] = useState(false);
-  const [initiateSignerErr, setInitiateSignerErr] = useState<string>();
+export default function RequestSignature() {
   const [deeplinkUrl, setDeeplinkUrl] = useState<string>();
   const [signerUuid, setSignerUuid] = useState<string>();
-  const [publicKey, setPublicKey] = useState<string>();
   const [isPolling, setIsPolling] = useState(false);
 
-  const startPolling = useCallback(() => {
-    setIsPolling(true);
-  }, []);
-  // const stopPolling = useCallback(() => {
-  //   setIsPolling(false);
-  // }, []);
+  const [isPending, startTransition] = useTransition();
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+
+  const handleRequestSigner = () => {
+    startTransition(async () => {
+      const res = await createAndRegisterSigner();
+      if ("error" in res) {
+        toast.error(res.error);
+        return;
+      }
+
+      setDeeplinkUrl(res.signerApprovalUrl);
+      setSignerUuid(res.signerUuid);
+      setIsQrModalOpen(true);
+      setIsPolling(true);
+      toast.success(res.success);
+    });
+  };
 
   useEffect(() => {
     if (!signerUuid || !isPolling) return;
 
-    const id = setInterval(async () => {
-      const res = await fetch(`/api/signer/status?uuid=${signerUuid}`);
+    let isApproved = false;
 
-      if (!res.ok) {
-        const error = await res.json();
-        console.log("error", error);
-        setInitiateSignerErr(error.error);
-        setIsFetching(false);
+    const id = setInterval(async () => {
+      const res = await checkSignerStatus(signerUuid);
+
+      if (res.error) {
+        console.log(res.error);
         return;
       }
 
-      const { status } = await res.json();
+      const { status } = res;
       if (status === "revoked") {
         clearInterval(id);
+        setIsPolling(false);
+        setIsQrModalOpen(false);
+        toast.error("Signer has been revoked");
         return;
       }
 
       if (status === "approved") {
+        setIsPolling(false);
+        setIsQrModalOpen(false);
         clearInterval(id);
+        if (isApproved) return;
+        toast.success("Signer has been approved");
+        isApproved = true;
         return;
       }
     }, 2000);
@@ -54,73 +69,22 @@ export default function RequestSignature({ id }: RequestSignatureProps) {
     };
   }, [isPolling, signerUuid]);
 
-  const registerSigner = useCallback(async () => {
-    if (isFetching || !signerUuid || !publicKey) return;
-
-    setIsFetching(true);
-    const res = await fetch("/api/signer/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ signerUuid, publicKey, id }),
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      console.log("error", error);
-      setInitiateSignerErr(error.error);
-      setIsFetching(false);
-      return;
-    }
-
-    const { signer_approval_url } = await res.json();
-    setDeeplinkUrl(signer_approval_url);
-    setIsFetching(false);
-    startPolling();
-  }, [signerUuid, publicKey, id, isFetching, startPolling]);
-
-  const createSigner = useCallback(async () => {
-    if (isFetching) return;
-    setIsFetching(true);
-    const res = await fetch("/api/signer/create");
-    if (!res.ok) {
-      const error = await res.json();
-      console.log("error", error);
-      setInitiateSignerErr(error.error);
-      setIsFetching(false);
-      return;
-    }
-
-    const { signer_uuid, public_key } = await res.json();
-
-    setSignerUuid(signer_uuid);
-    setPublicKey(public_key);
-    setIsFetching(false);
-
-    await registerSigner();
-  }, [isFetching, registerSigner]);
-
   return (
-    <div className="flex flex-col items-center justify-center gap-8 p-4">
-      {initiateSignerErr && <p>{initiateSignerErr}</p>}
-
-      {deeplinkUrl && (
-        <div className="flex items-center justify-center flex-col gap-4">
-          <QRCode value={deeplinkUrl} />
-          <p className="text-center">
-            Scan with your phone to approve app to cast with your account
-          </p>
-        </div>
-      )}
-
+    <section className="w-full">
       <ButtonAction
         btnType="primary"
-        disabled={isFetching}
-        onClick={() => createSigner()}
+        disabled={isPending}
+        onClick={() => handleRequestSigner()}
       >
-        {isFetching ? "Fetching link..." : "Request Signature"}
+        {isPending ? "Fetching link..." : "Request Signature"}
       </ButtonAction>
-    </div>
+
+      <Loader isLoading={isPending} />
+      <RequestSignatureQrModal
+        deeplinkUrl={deeplinkUrl}
+        isModalOpen={isQrModalOpen}
+        setIsModalOpen={setIsQrModalOpen}
+      />
+    </section>
   );
 }
