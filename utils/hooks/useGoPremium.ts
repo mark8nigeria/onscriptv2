@@ -44,7 +44,7 @@ export default function useGoPremium() {
       address: onscriptUserManagementContractAddress,
       abi: onscriptUserManagementAbi,
       functionName: "payForPremium",
-      value: amount,
+      value: amount as bigint,
     });
   };
 
