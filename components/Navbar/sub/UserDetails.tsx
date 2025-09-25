@@ -6,9 +6,7 @@ import ButtonAction from "@/components/ButtonAction";
 import { useAppSelector } from "@/utils";
 
 export default function UserDetails() {
-  const { isUserPremium, profilePic, username, isUserPlus } = useAppSelector(
-    (state) => state.user,
-  );
+  const { profilePic, username } = useAppSelector((state) => state.user);
 
   return (
     <ButtonAction className="flex items-center justify-center gap-1">

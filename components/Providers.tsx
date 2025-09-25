@@ -128,7 +128,7 @@ function InitUserInfoProvider({ children }: { children: React.ReactNode }) {
     }
 
     init();
-  }, [id, status]);
+  }, [id, status, dispatch]);
 
   useEffect(() => {
     if (walletAddress === "" || walletAddress === address) {
@@ -160,17 +160,26 @@ function InitUserInfoProvider({ children }: { children: React.ReactNode }) {
     dispatch(
       setOnChainState({ isUserOnChain, isUserPremium, isUserPlus: false }),
     );
-  }, [isUserOnChain, isLoading, isUserPremium, status, isError]);
+  }, [
+    isUserOnChain,
+    isLoading,
+    isUserPremium,
+    status,
+    isError,
+    dispatch,
+    isFetchingUserData,
+    walletAddress,
+  ]);
 
   useEffect(() => {
     dispatch(setError(isInitError));
-  }, [isInitError]);
+  }, [isInitError, dispatch]);
 
   useEffect(() => {
     dispatch(
       setLoading(isLoading || status === "loading" || isFetchingUserData),
     );
-  }, [isLoading, status, isFetchingUserData]);
+  }, [isLoading, status, isFetchingUserData, dispatch]);
 
   return (
     <>
