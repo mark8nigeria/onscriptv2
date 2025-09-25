@@ -17,6 +17,14 @@ export async function POST(request: Request) {
         { status: 401 },
       );
     }
+    const { API_URL } = process.env;
+
+    if (!API_URL) {
+      return NextResponse.json(
+        { error: "Variables not set is not defined" },
+        { status: 400 },
+      );
+    }
     const { id } = session.user;
     const body = await request.json();
     const parsedData = scheduleCastPostSchema.safeParse(body);
@@ -83,7 +91,7 @@ export async function POST(request: Request) {
 
       const res = await qstashClient.publishJSON({
         body: post,
-        url: "http://localhost:3000/api/cast/publish/qstash",
+        url: `${API_URL}/api/cast/publish/qstash`,
         notBefore: Math.floor(scheduledAt.getTime() / 1000),
         retries: 3,
       });
