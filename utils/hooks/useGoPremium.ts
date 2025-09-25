@@ -35,6 +35,10 @@ export default function useGoPremium() {
       toast.error("You're already a premium user");
       return;
     }
+    if (!amount) {
+      toast.error("Something went wrong");
+      return;
+    }
 
     writeContract({
       address: onscriptUserManagementContractAddress,
