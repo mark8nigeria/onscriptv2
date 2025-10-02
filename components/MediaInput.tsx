@@ -7,10 +7,7 @@ import { Plus, Upload } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { SelectMediaType } from "@/types/media.types";
-import {
-  detectFromHeaders,
-  fetchMetadata,
-} from "./UrlEmbedCard/lib/detectType";
+import { detectFromHeaders } from "./UrlEmbedCard/lib/detectType";
 import { MediaType } from "./UrlEmbedCard/types/embedCardTypes";
 
 type ImageInputProps = {

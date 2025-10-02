@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-// import { base } from "wagmi/chains";
-import { base } from "viem/chains";
+import { base } from "wagmi/chains";
 import { MiniKitProvider } from "@coinbase/onchainkit/minikit";
 import sdk from "@farcaster/miniapp-sdk";
-import { useAccount, useConnect, WagmiProvider } from "wagmi";
+import { useAccount, WagmiProvider } from "wagmi";
 import { wagmiConfig } from "@/config";
 import store from "@/redux";
 import { Provider } from "react-redux";
@@ -21,7 +20,6 @@ import Loader from "./Loader";
 import { getUserByIdAction } from "@/features/account/actions/getUserById.action";
 import { usePathname } from "next/navigation";
 import { hideLoaderRoute } from "@/data/routes.data";
-import { toast } from "sonner";
 
 export default function Providers(props: { children: ReactNode }) {
   useEffect(() => {
