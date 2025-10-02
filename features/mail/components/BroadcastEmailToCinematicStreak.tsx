@@ -7,7 +7,7 @@ import TextArea from "@/components/TextArea";
 import React, { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { broadCastToCinematicStreakSchema } from "../schema";
-import { broadcastToCinematicStreak } from "../action/broadcastToCinematicStreak";
+import { broadcastToCinematicStreak } from "../action/broadcastToCinematicStreak.action";
 import BroadcastResultsModal from "./BroadcastResultsModal";
 import { MailResult } from "@/lib/send-mail";
 

@@ -9,12 +9,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import ButtonAction from "@/components/ButtonAction";
 import { type PathDisplayed } from "@/features/cast/utils/useCastModal";
+import { CastCardProps } from "../../CastCard/cast-card.types";
 
 type ScheduleCastHeaderProps = {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   pathDisplayed: PathDisplayed;
   setPathDisplayed: React.Dispatch<React.SetStateAction<PathDisplayed>>;
   titles: Record<PathDisplayed, string>;
+  castData?: CastCardProps;
 };
 
 export default function ScheduleCastHeader({
@@ -22,12 +24,13 @@ export default function ScheduleCastHeader({
   setPathDisplayed,
   setIsModalOpen,
   titles,
+  castData,
 }: ScheduleCastHeaderProps) {
   return (
     <AlertDialogHeader>
       <div className="w-full flex items-center justify-between gap-4">
         <AlertDialogTitle className="text-xl text-left font-medium text-black">
-          {titles[pathDisplayed]}
+          {castData?.id ? "Edit Cast" : titles[pathDisplayed]}
         </AlertDialogTitle>
         <ButtonAction
           onClick={() => setIsModalOpen(false)}

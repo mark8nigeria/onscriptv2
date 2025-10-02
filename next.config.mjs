@@ -18,6 +18,11 @@ const nextConfig = {
         hostname: "tba-mobile.mypinata.cloud",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "peach-obedient-puffin-8.mypinata.cloud",
+        pathname: "/**",
+      },
     ],
   },
 };

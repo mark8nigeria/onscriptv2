@@ -9,7 +9,11 @@ import { optimizeMedia, uploadFiles } from "@/features/upload/utils";
 import { ScheduleCastPostType } from "../schemas/scheduleCastPost.schema";
 import { SelectMediaType } from "@/types/media.types";
 import { useRouter } from "next/navigation";
-import { deleteFilesAction } from "@/features/upload/action/deleteFilesAction";
+import { deleteFilesAction } from "@/features/upload/action/deleteFiles.action";
+import { saveToDraft as saveToDraftAction } from "../actions/saveToDraft.action";
+import { useAppSelector } from "@/utils";
+import { CastData } from "@/types/cast.types";
+import { CastCardProps } from "../components/CastCard/cast-card.types";
 
 export type PathDisplayed = "preview-cast" | "create-cast";
 const titles: Record<PathDisplayed, string> = {
@@ -17,9 +21,20 @@ const titles: Record<PathDisplayed, string> = {
   "create-cast": "New Cast",
 };
 
-export default function useCastModal() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSetPublishTimeOpen, setIsSetPublishTimeOpen] = useState(false);
+type useCastProps = {
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isSetPublishTimeOpen: boolean;
+  setIsSetPublishTimeOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function useCastModal({
+  isModalOpen,
+  setIsModalOpen,
+  isSetPublishTimeOpen,
+  setIsSetPublishTimeOpen,
+}: useCastProps) {
+  const [castId, setCastId] = useState<string>();
   const [pathDisplayed, setPathDisplayed] =
     useState<PathDisplayed>("create-cast");
   const [castMedia, setCastMedia] = useState<SelectMediaType[]>([]);
@@ -27,8 +42,9 @@ export default function useCastModal() {
 
   const router = useRouter();
 
+  const { id } = useAppSelector((state) => state.user);
   const { castData, parseCast } = useCastParserNeynar(castMedia);
-  const { handleChange, text, reset } = useByteLimitedText();
+  const { handleChange, text, reset, setText } = useByteLimitedText();
   const [isLoading, setIsLoading] = useState(false);
 
   const resetModal = useCallback(
@@ -76,6 +92,74 @@ export default function useCastModal() {
     [castData, resetModal],
   );
 
+  const handleFileUpload = useCallback(async (): Promise<
+    { url: string; fileId?: string; type?: "image" | "video" }[] | void
+  > => {
+    const castData = await parseCast(text);
+
+    const mediaWithIndex = castData.embeds.map((media, i) => ({
+      ...media,
+      index: i,
+    }));
+
+    // Files that need uploading
+    const filesToOptimize = mediaWithIndex.filter((m) => !!m.file);
+
+    const optimizedMedia = await optimizeMedia(
+      filesToOptimize.map((m) => m.file!),
+    );
+
+    const isError = optimizedMedia.find(({ error }) => !!error);
+    if (isError) {
+      toast.error(isError.error);
+      setIsLoading(false);
+      return;
+    }
+
+    const uploadFileResponse = await uploadFiles(
+      optimizedMedia.map((media) => media.file),
+    );
+
+    if ("error" in uploadFileResponse) {
+      toast.error(uploadFileResponse.error);
+      setIsLoading(false);
+      return;
+    }
+
+    let error = false;
+    const uploadedFiles: { url: string; index: number; fileId: string }[] = [];
+
+    uploadFileResponse.forEach((file, idx) => {
+      if ("error" in file) {
+        error = true;
+      } else {
+        uploadedFiles.push({
+          url: file.fileUrl,
+          fileId: file.id,
+          index: filesToOptimize[idx].index,
+        });
+      }
+    });
+
+    if (error) {
+      await deleteFilesAction(uploadedFiles.map((f) => f.fileId));
+      toast.error("Error uploading file. Please try again");
+      setIsLoading(false);
+      return;
+    }
+
+    // Build single ordered array of { url, fileId?, type? }
+    const files = mediaWithIndex.map((media) => {
+      const uploaded = uploadedFiles.find((f) => f.index === media.index);
+      if (uploaded) {
+        return { url: uploaded.url, fileId: uploaded.fileId, type: media.type };
+      }
+      return { url: media.url, type: media.type, fileId: media.fileId }; // preserve existing
+    });
+
+    return files;
+  }, [castMedia, text]);
+
   const handleSchedulePublish = useCallback(
     async (date: Date, userId: string) => {
       if (new Date() > date) {
@@ -83,68 +167,29 @@ export default function useCastModal() {
         return;
       }
 
+      const castData = await parseCast(text);
+
+      if (castData.text.length === 0 && castData.embeds.length === 0) {
+        toast.error("Cast is empty");
+        return;
+      }
+
       setIsLoading(true);
 
-      const optimizedMedia = await optimizeMedia(
-        castMedia.map((media) => media.file).filter((file) => !!file),
-      );
+      const embeds = await handleFileUpload();
 
-      const isError = optimizedMedia.find(({ error }) => !!error);
-
-      if (isError) {
-        toast.error(isError.error);
+      if (!embeds) {
         setIsLoading(false);
         return;
       }
-
-      const uploadFileResponse = await uploadFiles(
-        optimizedMedia.map((media) => media.file),
-      );
-
-      if ("error" in uploadFileResponse) {
-        toast.error(uploadFileResponse.error);
-        setIsLoading(false);
-        return;
-      }
-
-      console.log("uploadFileResponse", uploadFileResponse);
-
-      const fileUrlArr: string[] = [];
-      const filesId: string[] = [];
-      let error = false;
-
-      uploadFileResponse.forEach((file) => {
-        if ("error" in file) {
-          error = true;
-        } else {
-          fileUrlArr.push(file.fileUrl);
-          filesId.push(file.id);
-        }
-      });
-
-      if (error) {
-        await deleteFilesAction(filesId);
-        toast.error("Error uploading file. Please try again");
-        setIsLoading(false);
-        return;
-      }
-
-      const finalEmbeds = [
-        ...castData.embeds
-          .filter(({ file, type }) => !file && !type)
-          .map((value) => ({
-            url: value.url,
-          })),
-        ...fileUrlArr.map((url) => ({ url })),
-      ];
 
       const body: ScheduleCastPostType = {
         ...castData,
-        embeds: finalEmbeds,
+        embeds,
         scheduledAt: date,
         userId,
         status: PostStatusSchema.enum.SCHEDULED,
-        pinataFilesIds: filesId,
+        castId,
       };
 
       const res = await fetch("/api/cast/schedule", {
@@ -156,7 +201,9 @@ export default function useCastModal() {
       });
 
       if (!res.ok) {
-        await deleteFilesAction(filesId);
+        await deleteFilesAction(
+          embeds.map((f) => f.fileId).filter((f) => f !== undefined),
+        );
         const data = await res.json();
         toast.error((await data.error) || "Something went wrong");
         setIsLoading(false);
@@ -168,7 +215,54 @@ export default function useCastModal() {
       setIsLoading(false);
       resetModal(false);
     },
-    [castData, resetModal],
+    [castData, resetModal, text, castMedia],
+  );
+
+  const saveToDraft = useCallback(async () => {
+    if (!id) return;
+    const castData = await parseCast(text);
+
+    setIsLoading(true);
+
+    const embeds = await handleFileUpload();
+
+    if (!embeds) {
+      setIsLoading(false);
+      return;
+    }
+    console.log({ embeds });
+
+    const body: ScheduleCastPostType = {
+      ...castData,
+      embeds,
+      userId: id,
+      status: PostStatusSchema.enum.DRAFT,
+    };
+
+    const res = await saveToDraftAction(body, castId);
+
+    if ("error" in res) {
+      await deleteFilesAction(
+        embeds.map((f) => f.fileId).filter((f) => f !== undefined),
+      );
+      toast.error(res.error || "Something went wrong");
+      setIsLoading(false);
+      return;
+    }
+
+    toast.success(res.success);
+    router.refresh();
+    setIsLoading(false);
+    resetModal(false);
+  }, [castData, resetModal, text, castMedia]);
+
+  const setPreviewData = useCallback(
+    (castData: CastCardProps) => {
+      setCastId(castData.id);
+      setText(castData.text);
+      setCastMedia(castData.embeds as unknown as SelectMediaType[]);
+    },
+    [isModalOpen],
   );
 
   return {
@@ -190,5 +284,8 @@ export default function useCastModal() {
     setCastMedia,
     isModalOpen,
     setIsModalOpen,
+    setIsLoading,
+    saveToDraft,
+    setPreviewData,
   };
 }

@@ -1,3 +1,3 @@
-import getUrl from "./getUrl";
+import getUrl from "./getUrl.action";
 
 export { getUrl };

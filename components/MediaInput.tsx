@@ -7,6 +7,11 @@ import { Plus, Upload } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { SelectMediaType } from "@/types/media.types";
+import {
+  detectFromHeaders,
+  fetchMetadata,
+} from "./UrlEmbedCard/lib/detectType";
+import { MediaType } from "./UrlEmbedCard/types/embedCardTypes";
 
 type ImageInputProps = {
   className?: string;
@@ -155,6 +160,17 @@ function MediaDisplay({
   setSelectedMedias,
 }: MediaDisplayProps) {
   const { type, url } = media;
+  const [headerType, setHeaderType] = useState<MediaType>("unknown");
+
+  useEffect(() => {
+    async function fetchType() {
+      if (type) return;
+      const headerType = await detectFromHeaders(url);
+      setHeaderType(headerType);
+    }
+
+    fetchType();
+  }, [type, url]);
 
   return (
     <div
@@ -164,7 +180,7 @@ function MediaDisplay({
       )}
     >
       <div className="w-full h-full">
-        {type === "image" ? (
+        {(type === "image" || headerType === "image") && (
           <Image
             src={url}
             alt="user"
@@ -172,7 +188,8 @@ function MediaDisplay({
             height={240}
             className="w-full h-full object-cover rounded-2xl"
           />
-        ) : (
+        )}
+        {(type === "video" || headerType === "video") && (
           <video src={url} className="w-full h-full object-cover rounded-2xl" />
         )}
       </div>

@@ -3,7 +3,7 @@ import { JsonValue } from "@prisma/client/runtime/library";
 
 export type CastCardProps = {
   id: string;
-  signerUuid: string;
+  signerUuid: string | null;
   text: string;
   parent: string | null;
   channelId: string | null;

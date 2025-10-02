@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { base } from "wagmi/chains";
+// import { base } from "wagmi/chains";
+import { base } from "viem/chains";
 import { MiniKitProvider } from "@coinbase/onchainkit/minikit";
 import sdk from "@farcaster/miniapp-sdk";
-import { useAccount, WagmiProvider } from "wagmi";
+import { useAccount, useConnect, WagmiProvider } from "wagmi";
 import { wagmiConfig } from "@/config";
 import store from "@/redux";
 import { Provider } from "react-redux";
@@ -17,9 +18,10 @@ import {
   setOnChainState,
 } from "@/redux/user.slice";
 import Loader from "./Loader";
-import { getUserByIdAction } from "@/features/account/actions/getUserByIdAction";
+import { getUserByIdAction } from "@/features/account/actions/getUserById.action";
 import { usePathname } from "next/navigation";
 import { hideLoaderRoute } from "@/data/routes.data";
+import { toast } from "sonner";
 
 export default function Providers(props: { children: ReactNode }) {
   useEffect(() => {
@@ -61,7 +63,7 @@ function InitUserInfoProvider({ children }: { children: React.ReactNode }) {
     isError: false,
     message: "",
   });
-  const [walletAddress, setWalletAddress] = useState("");
+  const [walletAddress, setWalletAddress] = useState<string>();
   const { address } = useAccount();
   const dispatch = useAppDispatch();
   const { isUserOnChain, isError, isLoading, isUserPremium } =
@@ -95,8 +97,6 @@ function InitUserInfoProvider({ children }: { children: React.ReactNode }) {
             setIsInitError({ isError: true, message: "User does not exist" });
             return;
           }
-
-          setWalletAddress(session.user.address);
           const {
             walletAddress,
             fid,
@@ -106,6 +106,8 @@ function InitUserInfoProvider({ children }: { children: React.ReactNode }) {
             pfpUrl,
             role,
           } = user;
+
+          setWalletAddress(walletAddress);
           dispatch(
             setDbState({
               walletAddress,
@@ -131,14 +133,22 @@ function InitUserInfoProvider({ children }: { children: React.ReactNode }) {
   }, [id, status, dispatch]);
 
   useEffect(() => {
-    if (walletAddress === "" || walletAddress === address) {
+    if (!address || !walletAddress || walletAddress === "") return;
+
+    if (walletAddress === address) {
+      setIsInitError({
+        isError: false,
+        message: "",
+      });
       return;
     }
 
-    setIsInitError({
-      isError: walletAddress !== address,
-      message: "Connected wallet address does not match user wallet address",
-    });
+    if (walletAddress !== address) {
+      setIsInitError({
+        isError: true,
+        message: "Connected wallet address does not match user wallet address",
+      });
+    }
   }, [address, walletAddress]);
 
   useEffect(() => {
@@ -152,10 +162,13 @@ function InitUserInfoProvider({ children }: { children: React.ReactNode }) {
       isLoading ||
       status === "loading" ||
       isError ||
+      !walletAddress ||
       walletAddress === "" ||
       isFetchingUserData
     )
       return;
+
+    if (isUserOnChain === null || isUserPremium === null) return;
 
     dispatch(
       setOnChainState({ isUserOnChain, isUserPremium, isUserPlus: false }),

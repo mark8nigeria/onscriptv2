@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
+import { exceedCastLimit } from "@/features/cast/actions/exceedCastLimit.action";
 import { PostSchemaDataType } from "@/features/cast/schemas/cast.schema";
 import { scheduleCastPostSchema } from "@/features/cast/schemas/scheduleCastPost.schema";
+import { cleanupDeletedFiles } from "@/features/cast/utils/cleanupDeletedFiles";
 import { getUserById } from "@/helpers/read-db";
 import db from "@/lib/db";
 import { cancelQstashMessage, qstashClient } from "@/lib/qstash";
@@ -25,6 +27,14 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    const result = await exceedCastLimit();
+    console.log("result", result);
+
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+
     const { id } = session.user;
     const body = await request.json();
     const parsedData = scheduleCastPostSchema.safeParse(body);
@@ -37,15 +47,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const {
-      channelId,
-      embeds,
-      text,
-      scheduledAt,
-      status,
-      userId,
-      pinataFilesIds,
-    } = parsedData.data;
+    const { channelId, embeds, text, scheduledAt, status, userId, castId } =
+      parsedData.data;
+
+    if (!scheduledAt) {
+      return NextResponse.json({ error: "Date is required" }, { status: 400 });
+    }
 
     if (new Date() > scheduledAt) {
       return NextResponse.json(
@@ -81,37 +88,124 @@ export async function POST(request: Request) {
       channelId,
       embeds,
       scheduledAt,
-      pinataFilesIds,
     };
 
-    await db.$transaction(async (tx) => {
-      const post = await tx.post.create({
-        data: { ...postData },
-      });
-
-      const res = await qstashClient.publishJSON({
-        body: post,
-        url: `${API_URL}/api/cast/publish/qstash`,
-        notBefore: Math.floor(scheduledAt.getTime() / 1000),
-        retries: 3,
-      });
-      messageId = res.messageId;
-      if (!messageId) throw new Error("QStash publish failed");
-
-      await tx.post.update({
+    if (castId) {
+      const existingCast = await db.post.findUnique({
         where: {
-          id: post.id,
-        },
-        data: {
-          qstashMessageId: messageId,
+          id: castId,
+          userId,
         },
       });
-    });
 
-    return NextResponse.json(
-      { message: "Post scheduled successfully" },
-      { status: 200 },
-    );
+      if (!existingCast) {
+        await db.$transaction(async (tx) => {
+          const post = await tx.post.create({
+            data: { ...postData },
+          });
+
+          const res = await qstashClient.publishJSON({
+            body: post,
+            url: `${API_URL}/api/cast/publish/qstash`,
+            notBefore: Math.floor(scheduledAt.getTime() / 1000),
+            retries: 3,
+          });
+          messageId = res.messageId;
+          if (!messageId) throw new Error("QStash publish failed");
+
+          await tx.post.update({
+            where: {
+              id: post.id,
+            },
+            data: {
+              qstashMessageId: messageId,
+            },
+          });
+        });
+
+        return NextResponse.json(
+          { message: "Post scheduled successfully" },
+          { status: 200 },
+        );
+      }
+
+      if (existingCast) {
+        if (existingCast.qstashMessageId) {
+          await cancelQstashMessage(existingCast.qstashMessageId);
+        }
+
+        await db.$transaction(async (tx) => {
+          const post = await tx.post.update({
+            where: {
+              id: castId,
+              userId,
+            },
+            data: { ...postData },
+          });
+
+          const res = await qstashClient.publishJSON({
+            body: post,
+            url: `${API_URL}/api/cast/publish/qstash`,
+            notBefore: Math.floor(scheduledAt.getTime() / 1000),
+            retries: 3,
+          });
+          messageId = res.messageId;
+          if (!messageId) throw new Error("QStash publish failed");
+
+          await tx.post.update({
+            where: {
+              id: post.id,
+            },
+            data: {
+              qstashMessageId: messageId,
+            },
+          });
+        });
+
+        const oldEmbeds = existingCast.embeds;
+
+        if (oldEmbeds && embeds) {
+          await cleanupDeletedFiles(
+            oldEmbeds as { url?: string; fileId?: string; type?: string }[],
+            embeds,
+          );
+        }
+
+        return NextResponse.json(
+          { message: "Post scheduled successfully" },
+          { status: 200 },
+        );
+      }
+    } else {
+      await db.$transaction(async (tx) => {
+        const post = await tx.post.create({
+          data: { ...postData },
+        });
+
+        const res = await qstashClient.publishJSON({
+          body: post,
+          url: `${API_URL}/api/cast/publish/qstash`,
+          notBefore: Math.floor(scheduledAt.getTime() / 1000),
+          retries: 3,
+        });
+        messageId = res.messageId;
+        if (!messageId) throw new Error("QStash publish failed");
+
+        await tx.post.update({
+          where: {
+            id: post.id,
+          },
+          data: {
+            qstashMessageId: messageId,
+          },
+        });
+      });
+
+      return NextResponse.json(
+        { message: "Post scheduled successfully" },
+        { status: 200 },
+      );
+    }
   } catch (error) {
     if (messageId) {
       console.log("Canceling QStash message:", messageId);

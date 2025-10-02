@@ -23,15 +23,14 @@ enum PostStatus {
 model Post {
   id String @id @default(cuid())
 
-  signerUuid      String
+  signerUuid      String?
   text            String
   parent          String?
   channelId       String?
   parentAuthorFid Int?
 
-  embeds         Json?
-  pinataFilesIds String[] @default([])
-  postHash       String?  @unique
+  embeds   Json?
+  postHash String? @unique
 
   status      PostStatus @default(DRAFT)
   scheduledAt DateTime?

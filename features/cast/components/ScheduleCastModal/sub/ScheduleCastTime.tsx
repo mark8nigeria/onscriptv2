@@ -15,18 +15,20 @@ import TimePickerCombined from "@/components/TimePickerCombined";
 import { toast } from "sonner";
 import Loader from "@/components/Loader";
 import { useAppSelector } from "@/utils";
+import { checkIfUserHasSigner } from "@/features/signer/actions/checkIfSigner.action";
+import { CastCardProps } from "../../CastCard/cast-card.types";
+import { exceedCastLimit } from "@/features/cast/actions/exceedCastLimit.action";
 
 type ScheduleCastTimeProps = {
   isSetPublishTimeOpen: boolean;
   setIsSetPublishTimeOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  castData: {
-    embeds: {
-      url: string;
-    }[];
-    text: string;
-  };
   handleSchedulePublish: (date: Date, userId: string) => Promise<void>;
   isLoading: boolean;
+  onScheduleAndUserIsNotOnchain: () => void;
+  onScheduleAndNoUuid: () => void;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  castData?: CastCardProps;
+  onCastLimitExceeded: () => void;
 };
 
 export default function ScheduleCastTime({
@@ -35,20 +37,54 @@ export default function ScheduleCastTime({
   castData,
   handleSchedulePublish,
   isLoading,
+  onScheduleAndNoUuid,
+  onScheduleAndUserIsNotOnchain,
+  setIsLoading,
+  onCastLimitExceeded,
 }: ScheduleCastTimeProps) {
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date | undefined>(
+    castData?.scheduledAt || undefined,
+  );
   const [period, setPeriod] = React.useState<Period>("AM");
 
-  const { id } = useAppSelector((state) => state.user);
+  const { isUserOnChain, isUuidApprove, id } = useAppSelector(
+    (state) => state.user,
+  );
 
-  const handleSubmit = () => {
-    if (
-      isLoading ||
-      !date ||
-      (castData.text.length === 0 && castData.embeds.length === 0) ||
-      !id
-    )
+  const handleSubmit = async () => {
+    if (isLoading || !date || !id) return;
+
+    if (!isUserOnChain) {
+      onScheduleAndUserIsNotOnchain();
       return;
+    }
+
+    if (!isUuidApprove) {
+      setIsLoading(true);
+      const response = await checkIfUserHasSigner();
+
+      if (response.error) {
+        setIsLoading(false);
+        onScheduleAndNoUuid();
+        return;
+      }
+
+      setIsLoading(false);
+      onScheduleAndNoUuid();
+      return;
+    }
+
+    setIsLoading(true);
+    const result = await exceedCastLimit();
+
+    if (result.error) {
+      onCastLimitExceeded();
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(false);
+
     if (new Date() > date) {
       toast.error("Date cannot be in the past");
       return;
@@ -83,6 +119,7 @@ export default function ScheduleCastTime({
 
           <div className="space-y-6">
             <DatePicker
+              defaultDate={castData?.scheduledAt || undefined}
               disabled={isLoading}
               onChange={(date) => {
                 setDate(date);

@@ -41,5 +41,6 @@ export function useByteLimitedText(maxBytes: number = 320) {
     byteLength: getByteLength(text),
     maxBytes,
     reset,
+    setText,
   };
 }

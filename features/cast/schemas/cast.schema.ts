@@ -16,6 +16,8 @@ export const EmbedSchema = z
   .object({
     cast_id: CastIdSchema.optional(),
     url: z.string().url().optional(),
+    type: z.string().optional(),
+    fileId: z.string().optional(),
   })
   .strict();
 
@@ -42,7 +44,6 @@ export const PostSchema = z.object({
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  pinataFilesIds: z.array(z.string()).default([]),
 });
 
 export type PostSchemaDataType = z.infer<typeof PostSchema>;

@@ -70,7 +70,7 @@ export const createAndRegisterSigner = async (): CreateSignerReturn => {
     }
     if (!isUserRegistered) {
       return {
-        error: "Only premium users can create a signer",
+        error: "Only users onchain can create a signer",
       };
     }
 

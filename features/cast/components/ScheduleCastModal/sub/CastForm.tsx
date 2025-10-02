@@ -15,6 +15,7 @@ type CastFormProps = {
   text: string;
   MAX_MEDIA: number;
   setCastMedia: React.Dispatch<React.SetStateAction<SelectMediaType[]>>;
+  castMedia: SelectMediaType[];
 };
 
 export default function CastForm({
@@ -23,6 +24,7 @@ export default function CastForm({
   text,
   MAX_MEDIA,
   setCastMedia,
+  castMedia,
 }: CastFormProps) {
   return (
     <form
@@ -36,6 +38,7 @@ export default function CastForm({
         placeholder="Share a thought, an idea, or a story…"
       />
       <MediaInput
+        mediaUrls={castMedia}
         mediaType="image"
         onMediaChange={setCastMedia}
         maxMedia={MAX_MEDIA}

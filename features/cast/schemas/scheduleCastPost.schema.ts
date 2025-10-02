@@ -6,9 +6,9 @@ export const scheduleCastPostSchema = z.object({
   embeds: z.array(EmbedSchema).optional(),
   channelId: z.string().optional(),
   status: PostStatusSchema.default("DRAFT"),
-  scheduledAt: z.coerce.date(),
+  scheduledAt: z.coerce.date().optional(),
   userId: z.string(),
-  pinataFilesIds: z.array(z.string()).default([]),
+  castId: z.string().optional(),
 });
 
 export type ScheduleCastPostType = z.infer<typeof scheduleCastPostSchema>;

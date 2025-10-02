@@ -16,11 +16,17 @@ type DatePickerProps = {
   className?: string;
   onChange?: (date: Date) => void;
   disabled?: boolean;
+  defaultDate?: Date;
 };
 
-export function DatePicker({ className, onChange, disabled }: DatePickerProps) {
+export function DatePicker({
+  className,
+  onChange,
+  disabled,
+  defaultDate,
+}: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = React.useState<Date | undefined>(defaultDate);
   const [month, setMonth] = React.useState<Date | undefined>(date);
 
   const today = startOfDay(new Date());

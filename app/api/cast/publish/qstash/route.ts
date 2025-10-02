@@ -80,11 +80,17 @@ export async function POST(req: NextRequest) {
     }
 
     const url = `${NEYNAR_API_URL}/v2/farcaster/cast/`;
+    const finalEmbeds = (embeds as { url: string }[])?.map(
+      (embed: { url: string }) => ({
+        url: embed.url,
+      }),
+    );
+
     const postBody = {
       signer_uuid: signerUuid,
       text,
       parent_author_fid: parentAuthorFid,
-      embeds,
+      embeds: finalEmbeds,
       parent: parent ?? undefined,
       channel_id: channelId ?? undefined,
     };

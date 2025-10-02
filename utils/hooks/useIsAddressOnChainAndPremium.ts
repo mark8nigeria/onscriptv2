@@ -2,58 +2,62 @@
 
 import { onscriptUserManagementAbi } from "@/constants/abis";
 import { onscriptUserManagementContractAddress } from "@/constants/contractAddresses";
-import { useEffect } from "react";
-import { useReadContract } from "wagmi";
+import { readContract } from "@wagmi/core";
+import { useEffect, useState, useCallback } from "react";
+import { wagmiConfig } from "@/config";
 
 export default function useIsAddressOnChainAndPremium({
   address,
 }: {
-  address: string;
+  address?: string;
 }) {
-  const {
-    data: isUserRegistered,
-    isLoading: isUserRegisteredLoading,
-    isError: isUserRegisteredError,
-    refetch: refetchIsUserRegistered,
-  } = useReadContract({
-    address: onscriptUserManagementContractAddress,
-    abi: onscriptUserManagementAbi,
-    functionName: "getIsUserRegistered",
-    args: [address],
-    query: {
-      enabled: address !== "",
-    },
-  });
+  const [isUserOnChain, setIsUserOnChain] = useState<boolean | null>(null);
+  const [isUserPremium, setIsUserPremium] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const {
-    data: isUserPremium,
-    isLoading: isUserPremiumLoading,
-    isError: isUserPremiumError,
-    refetch: refetchIsUserPremium,
-  } = useReadContract({
-    address: onscriptUserManagementContractAddress,
-    abi: onscriptUserManagementAbi,
-    functionName: "getIsUserPremium",
-    args: [address],
-    query: {
-      enabled: address !== "",
-    },
-  });
+  const fetchUserStatus = useCallback(async () => {
+    if (!address) return;
 
-  const refresh: () => Promise<void> = async () => {
-    await Promise.all([refetchIsUserRegistered(), refetchIsUserPremium()]);
-  };
+    setIsLoading(true);
+    setIsError(false);
+
+    try {
+      const [registered, premium] = await Promise.all([
+        readContract(wagmiConfig, {
+          address: onscriptUserManagementContractAddress,
+          abi: onscriptUserManagementAbi,
+          functionName: "getIsUserRegistered",
+          args: [address],
+        }),
+        readContract(wagmiConfig, {
+          address: onscriptUserManagementContractAddress,
+          abi: onscriptUserManagementAbi,
+          functionName: "getIsUserPremium",
+          args: [address],
+        }),
+      ]);
+
+      setIsUserOnChain(Boolean(registered));
+      setIsUserPremium(Boolean(premium));
+    } catch (err) {
+      console.error("Contract read error:", err);
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [address]);
 
   useEffect(() => {
-    if (address) refresh();
-  }, [address, refresh]);
+    fetchUserStatus();
+  }, [fetchUserStatus]);
 
   return {
-    isUserOnChain: !!isUserRegistered,
-    isUserPremium: !!isUserPremium,
-    isUserOnChainAndPremium: !!(isUserRegistered && isUserPremium),
-    isLoading: isUserRegisteredLoading || isUserPremiumLoading,
-    isError: isUserRegisteredError || isUserPremiumError,
-    refresh,
+    isUserOnChain,
+    isUserPremium,
+    isUserOnChainAndPremium: !!(isUserOnChain && isUserPremium),
+    isLoading,
+    isError,
+    refresh: fetchUserStatus,
   };
 }

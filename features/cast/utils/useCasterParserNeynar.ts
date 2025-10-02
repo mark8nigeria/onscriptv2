@@ -23,10 +23,14 @@ export default function useCastParserNeynar(castMedia: SelectMediaType[]) {
     async (text: string) => {
       const urls = extractUrls(text);
 
-      setCastData({
+      const finalCastData: CastData = {
         text,
         embeds: [...urls.map((u) => ({ url: u })), ...castMedia],
-      });
+      };
+
+      setCastData(finalCastData);
+
+      return finalCastData;
     },
     [extractUrls, castMedia],
   );
