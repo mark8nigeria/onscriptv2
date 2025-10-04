@@ -30,7 +30,6 @@ export default function GoPremiumModal({
 
   const handleBtnClick = () => {
     goPremium();
-    console.log("now time to write this logic");
   };
 
   useEffect(() => {

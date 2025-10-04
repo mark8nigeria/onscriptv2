@@ -168,7 +168,6 @@ export default function GrantOrRevokeAdmin() {
 
   useEffect(() => {
     if (isErrorMakePremium) {
-      setMakePremiumAddress(undefined);
       toast.error(makePremiumError?.message || "Something went wrong");
     }
   }, [isErrorMakePremium]);
