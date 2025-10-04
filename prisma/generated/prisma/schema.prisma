@@ -1,0 +1,394 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "./generated/prisma"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x", "windows"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  FAILED
+}
+
+model Post {
+  id String @id @default(cuid())
+
+  signerUuid      String?
+  text            String
+  parent          String?
+  channelId       String?
+  parentAuthorFid Int?
+
+  embeds   Json?
+  postHash String? @unique
+
+  status      PostStatus @default(DRAFT)
+  scheduledAt DateTime?
+  publishedAt DateTime?
+
+  qstashMessageId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                String    @id @default(cuid())
+  walletAddress     String    @unique
+  fid               Int       @unique
+  username          String    @unique
+  displayName       String?
+  pfpUrl            String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  signerUuid        String?   @unique
+  isUuidApprove     Boolean?
+  signerRegDeadline DateTime?
+  signerPublicKey   String?
+  signerApprovalUrl String?
+  role              UserRole  @default(USER)
+
+  // Premium subscription
+  isPremium        Boolean   @default(false)
+  premiumExpiresAt DateTime?
+
+  // Usage tracking
+  dmsSentThisWeek Int      @default(0)
+  postsThisWeek   Int      @default(0)
+  weekResetDate   DateTime @default(now())
+
+  // Security fields - NEW
+  lastLoginAt   DateTime?
+  loginAttempts Int       @default(0)
+  lockedUntil   DateTime?
+  lastNonceUsed String?
+
+  // Relations
+  posts            Post[]
+  automationRules  AutomationRule[]
+  activityLogs     ActivityLog[]
+  campaigns        Campaign[]
+  streaks          Streak[]
+  participations   Participation[]
+  donations        Donation[]
+  campaignPayments CampaignPayment[]
+  securityEvents   SecurityEvent[]
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model AutomationRule {
+  id          String   @id @default(cuid())
+  triggerWord String
+  response    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // User association
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Usage tracking
+  timesTriggered Int       @default(0)
+  lastTriggered  DateTime?
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String?
+  timestamp DateTime @default(now())
+
+  // Security tracking - NEW
+  ipAddress String?
+  userAgent String?
+
+  // User association
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Campaign {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  category    String
+  imageUrl    String?
+
+  // Campaign settings
+  startDate DateTime
+  endDate   DateTime
+  frequency CampaignFrequency @default(WEEKLY)
+
+  // Requirements
+  minStreakLength     Int     @default(1)
+  contentRequirements String?
+
+  // Rewards
+  rewards   String?
+  prizePool String?
+
+  // Monetization
+  totalDonations Decimal  @default(0)
+  donationGoal   Decimal?
+
+  // Status
+  status CampaignStatus @default(ACTIVE)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  creatorId      String
+  creator        User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  streaks        Streak[]
+  participations Participation[]
+  donations      Donation[]
+  paymentInfo    CampaignPayment?
+}
+
+model LaunchCampaignParticipants {
+  id               String          @id @default(cuid())
+  fid              Int             @unique
+  username         String          @unique
+  email            String          @unique
+  xHandle          String          @unique
+  web3ContentWork  web3ContentWork
+  commitment       Boolean
+  helpNeeded       String?
+  storyTellingVibe String
+  userId           String          @unique
+  isApproved       Boolean?
+  following_team   Boolean         @default(false)
+  createdAt        DateTime?       @default(now())
+  updatedAt        DateTime?       @updatedAt
+}
+
+enum web3ContentWork {
+  YES
+  NO
+  KINDA
+}
+
+model Streak {
+  id                    String       @id @default(cuid())
+  currentStreak         Int          @default(0)
+  longestStreak         Int          @default(0)
+  lastParticipationDate DateTime?
+  status                StreakStatus @default(ACTIVE)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, userId])
+}
+
+model Participation {
+  id String @id @default(cuid())
+
+  // Content details
+  contentTitle String
+  contentUrl   String?
+  contentHash  String
+  description  String?
+
+  // Onchain verification
+  onchainTxHash String?
+  isVerified    Boolean @default(false)
+
+  // Submission details
+  submissionDate DateTime @default(now())
+  weekNumber     Int // Week number since campaign start
+
+  // Status
+  status ParticipationStatus @default(PENDING)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum CampaignFrequency {
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ENDED
+}
+
+enum StreakStatus {
+  ACTIVE
+  BROKEN
+  COMPLETED
+}
+
+enum ParticipationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// MONETIZATION MODELS
+
+model CampaignPayment {
+  id String @id @default(cuid())
+
+  // Payment details
+  amount   Decimal // $5 USDC creation fee
+  currency String  @default("USDC")
+
+  // Blockchain details
+  txHash      String  @unique
+  blockNumber Int?
+  gasUsed     Int?
+  gasPrice    String?
+
+  // Payment status
+  status PaymentStatus @default(PENDING)
+
+  // Recipient (Your wallet)
+  recipientAddress String // Your wallet address for receiving payments
+
+  // Security tracking - NEW
+  verificationHash String?
+  nonceUsed        String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  campaignId String   @unique
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  payerId    String
+  payer      User     @relation(fields: [payerId], references: [id], onDelete: Cascade)
+}
+
+model Donation {
+  id String @id @default(cuid())
+
+  // Donation details  
+  amount   Decimal
+  currency String  @default("USDC")
+  message  String?
+
+  // Blockchain details
+  txHash      String  @unique
+  blockNumber Int?
+  gasUsed     Int?
+  gasPrice    String?
+
+  // Payment status
+  status PaymentStatus @default(PENDING)
+
+  // Distribution tracking
+  creatorShare       Decimal // 80% goes to campaign creator
+  winnerShare        Decimal // 20% goes to highest streaker
+  isDistributed      Boolean @default(false)
+  distributionTxHash String?
+
+  // Security tracking - NEW
+  verificationHash String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  donorId    String
+  donor      User     @relation(fields: [donorId], references: [id], onDelete: Cascade)
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+}
+
+// NEW SECURITY MODELS
+
+model SecurityEvent {
+  id String @id @default(cuid())
+
+  // Event details
+  eventType   SecurityEventType
+  description String
+  severity    SecuritySeverity  @default(LOW)
+
+  // Context
+  ipAddress String?
+  userAgent String?
+  location  String?
+
+  // Additional data
+  metadata   String? // JSON string for additional context
+  resolved   Boolean   @default(false)
+  resolvedAt DateTime?
+  resolvedBy String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum SecurityEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  SIGNATURE_VERIFICATION_FAILED
+  RATE_LIMIT_EXCEEDED
+  SUSPICIOUS_ACTIVITY
+  ACCOUNT_LOCKED
+  NONCE_REUSE_ATTEMPT
+  UNAUTHORIZED_ACCESS
+}
+
+enum SecuritySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
