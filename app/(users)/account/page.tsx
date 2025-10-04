@@ -1,5 +1,4 @@
 import React from "react";
-import { RequestSignature } from "@/features/signer/components";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import AccountDetails from "@/features/account/components/AccountDetails";
@@ -38,7 +37,6 @@ export default async function AccountPage() {
       </div>
 
       <AccountDetails />
-      <RequestSignature />
     </main>
   );
 }

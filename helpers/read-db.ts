@@ -156,3 +156,16 @@ export const dashboardStats = async (userId: string) => {
     return null;
   }
 };
+
+export const getAllAdmins = async () => {
+  try {
+    return await db.user.findMany({
+      where: {
+        role: "ADMIN",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching admins:", error);
+    return null;
+  }
+};
