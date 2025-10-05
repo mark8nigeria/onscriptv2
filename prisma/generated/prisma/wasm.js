@@ -5,13 +5,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError,
+  getPrismaClient,
+  sqltag,
+  empty,
+  join,
+  raw,
+  skip,
   Decimal,
+  Debug,
   objectEnumValues,
   makeStrictEnum,
+  Extensions,
+  warnOnce,
+  defineDmmfProperty,
   Public,
   getRuntime,
-  skip
-} = require('./runtime/index-browser.js')
+  createParam,
+} = require('./runtime/wasm-engine-edge.js')
 
 
 const Prisma = {}
@@ -20,79 +35,35 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.13.0
- * Query Engine version: 361e86d0ea4987e9f53a565309b3eed797a6bcbd
+ * Prisma Client JS version: 6.16.3
+ * Query Engine version: bb420e667c1820a8c05a38023385f6cc7ef8e83a
  */
 Prisma.prismaVersion = {
-  client: "6.13.0",
-  engine: "361e86d0ea4987e9f53a565309b3eed797a6bcbd"
+  client: "6.16.3",
+  engine: "bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 }
 
-Prisma.PrismaClientKnownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)};
-Prisma.PrismaClientUnknownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientRustPanicError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientInitializationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientValidationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
+Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
+Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
+Prisma.PrismaClientInitializationError = PrismaClientInitializationError
+Prisma.PrismaClientValidationError = PrismaClientValidationError
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.empty = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.join = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.raw = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.sql = sqltag
+Prisma.empty = empty
+Prisma.join = join
+Prisma.raw = raw
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.defineExtension = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.getExtensionContext = Extensions.getExtensionContext
+Prisma.defineExtension = Extensions.defineExtension
 
 /**
  * Shorthand utilities for JSON filtering
@@ -109,10 +80,11 @@ Prisma.NullTypes = {
 
 
 
+
+
 /**
  * Enums
  */
-
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -346,6 +318,12 @@ exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER'
 };
 
+exports.web3ContentWork = exports.$Enums.web3ContentWork = {
+  YES: 'YES',
+  NO: 'NO',
+  KINDA: 'KINDA'
+};
+
 exports.CampaignFrequency = exports.$Enums.CampaignFrequency = {
   DAILY: 'DAILY',
   WEEKLY: 'WEEKLY',
@@ -358,12 +336,6 @@ exports.CampaignStatus = exports.$Enums.CampaignStatus = {
   ACTIVE: 'ACTIVE',
   PAUSED: 'PAUSED',
   ENDED: 'ENDED'
-};
-
-exports.web3ContentWork = exports.$Enums.web3ContentWork = {
-  YES: 'YES',
-  NO: 'NO',
-  KINDA: 'KINDA'
 };
 
 exports.StreakStatus = exports.$Enums.StreakStatus = {
@@ -416,34 +388,94 @@ exports.Prisma.ModelName = {
   Donation: 'Donation',
   SecurityEvent: 'SecurityEvent'
 };
-
 /**
- * This is a stub Prisma Client that will error at runtime if called.
+ * Create the Client
  */
-class PrismaClient {
-  constructor() {
-    return new Proxy(this, {
-      get(target, prop) {
-        let message
-        const runtime = getRuntime()
-        if (runtime.isEdge) {
-          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
-- Use Prisma Accelerate: https://pris.ly/d/accelerate
-- Use Driver Adapters: https://pris.ly/d/driver-adapters
-`;
-        } else {
-          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
-        }
-
-        message += `
-If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
-
-        throw new Error(message)
+const config = {
+  "generator": {
+    "name": "client",
+    "provider": {
+      "fromEnvVar": null,
+      "value": "prisma-client-js"
+    },
+    "output": {
+      "value": "C:\\Projects\\clients\\onscriptv2\\prisma\\generated\\prisma",
+      "fromEnvVar": null
+    },
+    "config": {
+      "engineType": "library"
+    },
+    "binaryTargets": [
+      {
+        "fromEnvVar": null,
+        "value": "windows",
+        "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "windows"
       }
-    })
+    ],
+    "previewFeatures": [],
+    "sourceFilePath": "C:\\Projects\\clients\\onscriptv2\\prisma\\schema.prisma",
+    "isCustomOutput": true
+  },
+  "relativeEnvPaths": {
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
+  },
+  "relativePath": "../..",
+  "clientVersion": "6.16.3",
+  "engineVersion": "bb420e667c1820a8c05a38023385f6cc7ef8e83a",
+  "datasourceNames": [
+    "db"
+  ],
+  "activeProvider": "postgresql",
+  "inlineDatasources": {
+    "db": {
+      "url": {
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
+      }
+    }
+  },
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./generated/prisma\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\", \"rhel-openssl-3.0.x\", \"windows\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n  // directUrl = env(\"DIRECT_URL\")\n}\n\nenum PostStatus {\n  DRAFT\n  SCHEDULED\n  PUBLISHED\n  FAILED\n}\n\nmodel Post {\n  id String @id @default(cuid())\n\n  signerUuid      String?\n  text            String\n  parent          String?\n  channelId       String?\n  parentAuthorFid Int?\n\n  embeds   Json?\n  postHash String? @unique\n\n  status      PostStatus @default(DRAFT)\n  scheduledAt DateTime?\n  publishedAt DateTime?\n\n  qstashMessageId String? @unique\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nmodel User {\n  id                String    @id @default(cuid())\n  walletAddress     String    @unique\n  fid               Int       @unique\n  username          String    @unique\n  displayName       String?\n  pfpUrl            String?\n  createdAt         DateTime  @default(now())\n  updatedAt         DateTime  @updatedAt\n  signerUuid        String?   @unique\n  isUuidApprove     Boolean?\n  signerRegDeadline DateTime?\n  signerPublicKey   String?\n  signerApprovalUrl String?\n  role              UserRole  @default(USER)\n\n  // Premium subscription\n  isPremium        Boolean   @default(false)\n  premiumExpiresAt DateTime?\n\n  // Usage tracking\n  dmsSentThisWeek Int      @default(0)\n  postsThisWeek   Int      @default(0)\n  weekResetDate   DateTime @default(now())\n\n  // Security fields - NEW\n  lastLoginAt   DateTime?\n  loginAttempts Int       @default(0)\n  lockedUntil   DateTime?\n  lastNonceUsed String?\n\n  // Relations\n  posts            Post[]\n  automationRules  AutomationRule[]\n  activityLogs     ActivityLog[]\n  campaigns        Campaign[]\n  streaks          Streak[]\n  participations   Participation[]\n  donations        Donation[]\n  campaignPayments CampaignPayment[]\n  securityEvents   SecurityEvent[]\n}\n\nenum UserRole {\n  ADMIN\n  USER\n}\n\nmodel AutomationRule {\n  id          String   @id @default(cuid())\n  triggerWord String\n  response    String\n  isActive    Boolean  @default(true)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // User association\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  // Usage tracking\n  timesTriggered Int       @default(0)\n  lastTriggered  DateTime?\n}\n\nmodel ActivityLog {\n  id        String   @id @default(cuid())\n  action    String\n  details   String?\n  timestamp DateTime @default(now())\n\n  // Security tracking - NEW\n  ipAddress String?\n  userAgent String?\n\n  // User association\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nmodel Campaign {\n  id          String  @id @default(cuid())\n  name        String\n  description String\n  category    String\n  imageUrl    String?\n\n  // Campaign settings\n  startDate DateTime\n  endDate   DateTime\n  frequency CampaignFrequency @default(WEEKLY)\n\n  // Requirements\n  minStreakLength     Int     @default(1)\n  contentRequirements String?\n\n  // Rewards\n  rewards   String?\n  prizePool String?\n\n  // Monetization\n  totalDonations Decimal  @default(0)\n  donationGoal   Decimal?\n\n  // Status\n  status CampaignStatus @default(ACTIVE)\n\n  // Timestamps\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  creatorId      String\n  creator        User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)\n  streaks        Streak[]\n  participations Participation[]\n  donations      Donation[]\n  paymentInfo    CampaignPayment?\n}\n\nmodel LaunchCampaignParticipants {\n  id               String          @id @default(cuid())\n  fid              Int             @unique\n  username         String          @unique\n  email            String          @unique\n  xHandle          String          @unique\n  web3ContentWork  web3ContentWork\n  commitment       Boolean\n  helpNeeded       String?\n  storyTellingVibe String\n  userId           String          @unique\n  isApproved       Boolean?\n  following_team   Boolean         @default(false)\n  createdAt        DateTime?       @default(now())\n  updatedAt        DateTime?       @updatedAt\n}\n\nenum web3ContentWork {\n  YES\n  NO\n  KINDA\n}\n\nmodel Streak {\n  id                    String       @id @default(cuid())\n  currentStreak         Int          @default(0)\n  longestStreak         Int          @default(0)\n  lastParticipationDate DateTime?\n  status                StreakStatus @default(ACTIVE)\n\n  // Timestamps\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  campaignId String\n  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)\n  userId     String\n  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([campaignId, userId])\n}\n\nmodel Participation {\n  id String @id @default(cuid())\n\n  // Content details\n  contentTitle String\n  contentUrl   String?\n  contentHash  String\n  description  String?\n\n  // Onchain verification\n  onchainTxHash String?\n  isVerified    Boolean @default(false)\n\n  // Submission details\n  submissionDate DateTime @default(now())\n  weekNumber     Int // Week number since campaign start\n\n  // Status\n  status ParticipationStatus @default(PENDING)\n\n  // Timestamps\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  campaignId String\n  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)\n  userId     String\n  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nenum CampaignFrequency {\n  DAILY\n  WEEKLY\n  BIWEEKLY\n  MONTHLY\n}\n\nenum CampaignStatus {\n  DRAFT\n  ACTIVE\n  PAUSED\n  ENDED\n}\n\nenum StreakStatus {\n  ACTIVE\n  BROKEN\n  COMPLETED\n}\n\nenum ParticipationStatus {\n  PENDING\n  VERIFIED\n  REJECTED\n}\n\n// MONETIZATION MODELS\n\nmodel CampaignPayment {\n  id String @id @default(cuid())\n\n  // Payment details\n  amount   Decimal // $5 USDC creation fee\n  currency String  @default(\"USDC\")\n\n  // Blockchain details\n  txHash      String  @unique\n  blockNumber Int?\n  gasUsed     Int?\n  gasPrice    String?\n\n  // Payment status\n  status PaymentStatus @default(PENDING)\n\n  // Recipient (Your wallet)\n  recipientAddress String // Your wallet address for receiving payments\n\n  // Security tracking - NEW\n  verificationHash String?\n  nonceUsed        String?\n\n  // Timestamps\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  campaignId String   @unique\n  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)\n  payerId    String\n  payer      User     @relation(fields: [payerId], references: [id], onDelete: Cascade)\n}\n\nmodel Donation {\n  id String @id @default(cuid())\n\n  // Donation details  \n  amount   Decimal\n  currency String  @default(\"USDC\")\n  message  String?\n\n  // Blockchain details\n  txHash      String  @unique\n  blockNumber Int?\n  gasUsed     Int?\n  gasPrice    String?\n\n  // Payment status\n  status PaymentStatus @default(PENDING)\n\n  // Distribution tracking\n  creatorShare       Decimal // 80% goes to campaign creator\n  winnerShare        Decimal // 20% goes to highest streaker\n  isDistributed      Boolean @default(false)\n  distributionTxHash String?\n\n  // Security tracking - NEW\n  verificationHash String?\n\n  // Timestamps\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  campaignId String\n  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)\n  donorId    String\n  donor      User     @relation(fields: [donorId], references: [id], onDelete: Cascade)\n}\n\nenum PaymentStatus {\n  PENDING\n  CONFIRMED\n  FAILED\n  REFUNDED\n}\n\n// NEW SECURITY MODELS\n\nmodel SecurityEvent {\n  id String @id @default(cuid())\n\n  // Event details\n  eventType   SecurityEventType\n  description String\n  severity    SecuritySeverity  @default(LOW)\n\n  // Context\n  ipAddress String?\n  userAgent String?\n  location  String?\n\n  // Additional data\n  metadata   String? // JSON string for additional context\n  resolved   Boolean   @default(false)\n  resolvedAt DateTime?\n  resolvedBy String?\n\n  // Timestamps\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nenum SecurityEventType {\n  LOGIN_SUCCESS\n  LOGIN_FAILED\n  SIGNATURE_VERIFICATION_FAILED\n  RATE_LIMIT_EXCEEDED\n  SUSPICIOUS_ACTIVITY\n  ACCOUNT_LOCKED\n  NONCE_REUSE_ATTEMPT\n  UNAUTHORIZED_ACCESS\n}\n\nenum SecuritySeverity {\n  LOW\n  MEDIUM\n  HIGH\n  CRITICAL\n}\n",
+  "inlineSchemaHash": "ace798e4c364f9c3a8bfeae1d5ce6435dc55ade4ebf602671195254d546744d1",
+  "copyEngine": true
+}
+config.dirname = '/'
+
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"signerUuid\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"text\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"channelId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parentAuthorFid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"embeds\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"postHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PostStatus\"},{\"name\":\"scheduledAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"publishedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"qstashMessageId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"walletAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"displayName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pfpUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"signerUuid\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isUuidApprove\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"signerRegDeadline\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"signerPublicKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"signerApprovalUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"isPremium\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"premiumExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"dmsSentThisWeek\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"postsThisWeek\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"weekResetDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastLoginAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"loginAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"lockedUntil\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastNonceUsed\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"automationRules\",\"kind\":\"object\",\"type\":\"AutomationRule\",\"relationName\":\"AutomationRuleToUser\"},{\"name\":\"activityLogs\",\"kind\":\"object\",\"type\":\"ActivityLog\",\"relationName\":\"ActivityLogToUser\"},{\"name\":\"campaigns\",\"kind\":\"object\",\"type\":\"Campaign\",\"relationName\":\"CampaignToUser\"},{\"name\":\"streaks\",\"kind\":\"object\",\"type\":\"Streak\",\"relationName\":\"StreakToUser\"},{\"name\":\"participations\",\"kind\":\"object\",\"type\":\"Participation\",\"relationName\":\"ParticipationToUser\"},{\"name\":\"donations\",\"kind\":\"object\",\"type\":\"Donation\",\"relationName\":\"DonationToUser\"},{\"name\":\"campaignPayments\",\"kind\":\"object\",\"type\":\"CampaignPayment\",\"relationName\":\"CampaignPaymentToUser\"},{\"name\":\"securityEvents\",\"kind\":\"object\",\"type\":\"SecurityEvent\",\"relationName\":\"SecurityEventToUser\"}],\"dbName\":null},\"AutomationRule\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"triggerWord\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"response\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AutomationRuleToUser\"},{\"name\":\"timesTriggered\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"lastTriggered\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"ActivityLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"details\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"timestamp\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ActivityLogToUser\"}],\"dbName\":null},\"Campaign\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"frequency\",\"kind\":\"enum\",\"type\":\"CampaignFrequency\"},{\"name\":\"minStreakLength\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"contentRequirements\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rewards\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"prizePool\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalDonations\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"donationGoal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"CampaignStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"creatorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creator\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CampaignToUser\"},{\"name\":\"streaks\",\"kind\":\"object\",\"type\":\"Streak\",\"relationName\":\"CampaignToStreak\"},{\"name\":\"participations\",\"kind\":\"object\",\"type\":\"Participation\",\"relationName\":\"CampaignToParticipation\"},{\"name\":\"donations\",\"kind\":\"object\",\"type\":\"Donation\",\"relationName\":\"CampaignToDonation\"},{\"name\":\"paymentInfo\",\"kind\":\"object\",\"type\":\"CampaignPayment\",\"relationName\":\"CampaignToCampaignPayment\"}],\"dbName\":null},\"LaunchCampaignParticipants\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"xHandle\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"web3ContentWork\",\"kind\":\"enum\",\"type\":\"web3ContentWork\"},{\"name\":\"commitment\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"helpNeeded\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"storyTellingVibe\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isApproved\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"following_team\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Streak\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"currentStreak\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"longestStreak\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"lastParticipationDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"StreakStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"campaignId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"campaign\",\"kind\":\"object\",\"type\":\"Campaign\",\"relationName\":\"CampaignToStreak\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"StreakToUser\"}],\"dbName\":null},\"Participation\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contentTitle\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contentUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contentHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"onchainTxHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"submissionDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"weekNumber\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"ParticipationStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"campaignId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"campaign\",\"kind\":\"object\",\"type\":\"Campaign\",\"relationName\":\"CampaignToParticipation\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ParticipationToUser\"}],\"dbName\":null},\"CampaignPayment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"txHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"blockNumber\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"gasUsed\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"gasPrice\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PaymentStatus\"},{\"name\":\"recipientAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"verificationHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nonceUsed\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"campaignId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"campaign\",\"kind\":\"object\",\"type\":\"Campaign\",\"relationName\":\"CampaignToCampaignPayment\"},{\"name\":\"payerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"payer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CampaignPaymentToUser\"}],\"dbName\":null},\"Donation\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"txHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"blockNumber\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"gasUsed\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"gasPrice\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PaymentStatus\"},{\"name\":\"creatorShare\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"winnerShare\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"isDistributed\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"distributionTxHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"verificationHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"campaignId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"campaign\",\"kind\":\"object\",\"type\":\"Campaign\",\"relationName\":\"CampaignToDonation\"},{\"name\":\"donorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"donor\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"DonationToUser\"}],\"dbName\":null},\"SecurityEvent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"eventType\",\"kind\":\"enum\",\"type\":\"SecurityEventType\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"severity\",\"kind\":\"enum\",\"type\":\"SecuritySeverity\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resolved\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"resolvedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"resolvedBy\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SecurityEventToUser\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
+config.engineWasm = {
+  getRuntime: async () => require('./query_engine_bg.js'),
+  getQueryEngineWasmModule: async () => {
+    const loader = (await import('#wasm-engine-loader')).default
+    const engine = (await loader).default
+    return engine
   }
 }
+config.compilerWasm = undefined
 
+config.injectableEdgeEnv = () => ({
+  parsed: {
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+  }
+})
+
+if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
+  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
+}
+
+const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-
 Object.assign(exports, Prisma)
+
