@@ -4,6 +4,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { type CastData } from "@/types/cast.types";
 import { useAppSelector } from "@/utils";
+import CastContent from "../CastContent";
 
 type CastPreviewProps = {
   className?: string;
@@ -38,9 +39,7 @@ export default function CastPreview(props: CastPreviewProps) {
         <div className="flex items-start justify-start gap-2 flex-col w-full">
           <div>
             <p className="font-medium">{username}</p>
-            <pre className="text-black font-poppins whitespace-pre-wrap text-xs">
-              {text}
-            </pre>
+            <CastContent cast={text} />
           </div>
 
           <CastCardEmbeds embeds={embeds} />
