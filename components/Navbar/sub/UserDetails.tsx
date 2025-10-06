@@ -4,13 +4,16 @@ import Image from "next/image";
 import React from "react";
 import ButtonAction from "@/components/ButtonAction";
 import { useAppSelector } from "@/utils";
+import { BadgeCheck } from "lucide-react";
 
 export default function UserDetails() {
-  const { profilePic, username } = useAppSelector((state) => state.user);
+  const { profilePic, username, isUserPremium } = useAppSelector(
+    (state) => state.user,
+  );
 
   return (
-    <ButtonAction className="flex items-center justify-center gap-1">
-      <div className="size-8 rounded-full overflow-hidden bg-gray-200">
+    <ButtonAction className="flex items-center justify-center gap-1 relative">
+      <div className="relative size-8 rounded-full overflow-hidden bg-gray-200">
         {profilePic && (
           <Image
             src={profilePic}
@@ -21,12 +24,11 @@ export default function UserDetails() {
           />
         )}
       </div>
-      {/* <div className="flex flex-col justify-center items-start">
-        <p className="text-[10px]">@{username}</p>
-        <p className="text-[10px] text-gray-600">
-          {isUserPremium ? "Premium" : isUserPlus ? "Plus" : "Freemium"}
-        </p>
-      </div> */}
+      {isUserPremium && (
+        <div className="absolute top-0 right-0 translate-x-0.5 -translate-y-0.5 p-0.5 bg-black rounded-full">
+          <BadgeCheck className="size-2.5 text-white" />
+        </div>
+      )}
     </ButtonAction>
   );
 }

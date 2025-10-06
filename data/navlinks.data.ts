@@ -22,4 +22,8 @@ export const adminNavLinks = [
     name: "Dashboard",
     href: "/admin/dashboard",
   },
+  {
+    name: "Access Control",
+    href: "/admin/access-control",
+  },
 ];
