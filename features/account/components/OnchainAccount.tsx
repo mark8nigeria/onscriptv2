@@ -3,7 +3,6 @@
 import ButtonAction from "@/components/ButtonAction";
 import Loader from "@/components/Loader";
 import { useAppSelector, useComeOnchain } from "@/utils";
-import DeleteOnChainAccount from "@/features/account/components/DeleteOnChainAccount";
 
 export default function OnchainAccount() {
   const { isUserOnChain, isError } = useAppSelector((state) => state.user);
@@ -30,8 +29,6 @@ export default function OnchainAccount() {
               </div>
             ))}
         </div>
-
-        <DeleteOnChainAccount />
       </div>
       <Loader isLoading={isPending} />
     </>
