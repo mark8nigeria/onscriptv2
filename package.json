@@ -26,6 +26,7 @@
     "@auth/prisma-adapter": "^2.10.0",
     "@coinbase/onchainkit": "^0.38.19",
     "@farcaster/auth-client": "^0.7.0",
+    "@farcaster/auth-kit": "^0.8.1",
     "@farcaster/frame-sdk": "^0.1.7",
     "@farcaster/hub-nodejs": "^0.15.5",
     "@farcaster/miniapp-sdk": "^0.1.8",
@@ -74,7 +75,7 @@
     "swr": "^2.3.4",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
-    "viem": "^2.33.3",
+    "viem": "^2.37.13",
     "wagmi": "^2.16.0",
     "zod": "^3.25.76"
   },
