@@ -2,22 +2,31 @@
 
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChainSelector } from "@/components/ChainSelector";
-import { StreakParticipationForm } from "./StreakParticipationForm";
-import { useStreakVerification } from "@/utils/hooks/useStreakVerification";
-import { CHAIN_CONFIGS, type SupportedChain } from "@/constants/contractAddresses";
-import { 
-  Trophy, 
-  Target, 
-  Users, 
-  Clock, 
+import ChainSelector from "@/components/ChainSelector";
+import StreakParticipationForm from "./StreakParticipationForm";
+import useStreakVerification from "@/utils/hooks/useStreakVerification";
+import {
+  CHAIN_CONFIGS,
+  type SupportedChain,
+} from "@/constants/contractAddresses";
+import {
+  Trophy,
+  Target,
+  Users,
+  Clock,
   ExternalLink,
   AlertCircle,
   CheckCircle,
-  Flame
+  Flame,
 } from "lucide-react";
 
 interface StreakDashboardProps {
@@ -25,7 +34,10 @@ interface StreakDashboardProps {
   campaignName?: string;
 }
 
-export default function StreakDashboard({ campaignId, campaignName }: StreakDashboardProps) {
+export default function StreakDashboard({
+  campaignId,
+  campaignName,
+}: StreakDashboardProps) {
   const { address } = useAccount();
   const [selectedChain, setSelectedChain] = useState<SupportedChain>("base");
   const [showParticipationForm, setShowParticipationForm] = useState(false);
@@ -52,11 +64,11 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
   const formatDuration = (seconds: number) => {
     const days = Math.floor(seconds / (24 * 60 * 60));
     const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
-    
+
     if (days > 0) {
-      return `${days} day${days > 1 ? 's' : ''}${hours > 0 ? ` ${hours}h` : ''}`;
+      return `${days} day${days > 1 ? "s" : ""}${hours > 0 ? ` ${hours}h` : ""}`;
     }
-    return `${hours} hour${hours > 1 ? 's' : ''}`;
+    return `${hours} hour${hours > 1 ? "s" : ""}`;
   };
 
   if (isLoading) {
@@ -94,7 +106,8 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
             <div>
               <h3 className="text-lg font-semibold">Contract Not Deployed</h3>
               <p className="text-muted-foreground">
-                The streak verification contract is not yet deployed on {chainName}.
+                The streak verification contract is not yet deployed on{" "}
+                {chainName}.
               </p>
             </div>
           </div>
@@ -130,7 +143,9 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Campaign Details</span>
-              <Badge variant={campaignDetails.isActive ? "default" : "secondary"}>
+              <Badge
+                variant={campaignDetails.isActive ? "default" : "secondary"}
+              >
                 {campaignDetails.isActive ? "Active" : "Inactive"}
               </Badge>
             </CardTitle>
@@ -146,7 +161,7 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Clock className="w-4 h-4 text-muted-foreground" />
                 <div>
@@ -156,7 +171,7 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Users className="w-4 h-4 text-muted-foreground" />
                 <div>
@@ -167,7 +182,7 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Clock className="w-4 h-4 text-muted-foreground" />
               <div>
@@ -199,7 +214,7 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
                 <p className="text-2xl font-bold">{currentStreak}</p>
                 <p className="text-sm text-muted-foreground">Current Streak</p>
               </div>
-              
+
               <div className="text-center space-y-2">
                 <div className="flex items-center justify-center">
                   <Trophy className="w-8 h-8 text-yellow-500" />
@@ -208,11 +223,13 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
                 <p className="text-sm text-muted-foreground">Longest Streak</p>
               </div>
             </div>
-            
+
             {isParticipant ? (
               <div className="mt-4 flex items-center justify-center text-green-600">
                 <CheckCircle className="w-4 h-4 mr-2" />
-                <span className="text-sm">You're participating in this campaign</span>
+                <span className="text-sm">
+                  You're participating in this campaign
+                </span>
               </div>
             ) : (
               <div className="mt-4 text-center">
@@ -257,7 +274,9 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Contract: {CHAIN_CONFIGS[selectedChain].contractAddress}</span>
+            <span>
+              Contract: {CHAIN_CONFIGS[selectedChain].contractAddress}
+            </span>
             <a
               href={`${CHAIN_CONFIGS[selectedChain].blockExplorer?.url}/address/${CHAIN_CONFIGS[selectedChain].contractAddress}`}
               target="_blank"
@@ -273,5 +292,3 @@ export default function StreakDashboard({ campaignId, campaignName }: StreakDash
     </div>
   );
 }
-
-

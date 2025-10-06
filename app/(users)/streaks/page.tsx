@@ -2,15 +2,23 @@
 
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { StreakDashboard } from "@/features/campaign/components/StreakDashboard";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import StreakDashboard from "@/features/campaign/components/StreakDashboard";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, ExternalLink, Info } from "lucide-react";
 
 export default function StreaksPage() {
   const { address, isConnected } = useAccount();
-  const [selectedCampaign, setSelectedCampaign] = useState("weekly-cinematic-streak");
+  const [selectedCampaign, setSelectedCampaign] = useState(
+    "weekly-cinematic-streak",
+  );
 
   const campaigns = [
     {
@@ -68,7 +76,8 @@ export default function StreaksPage() {
       <div className="space-y-4">
         <h1 className="text-3xl font-bold">Streak Verification</h1>
         <p className="text-muted-foreground">
-          Participate in on-chain verified streaks across multiple blockchains. Choose your preferred chain and start building your streak!
+          Participate in on-chain verified streaks across multiple blockchains.
+          Choose your preferred chain and start building your streak!
         </p>
       </div>
 
@@ -77,7 +86,8 @@ export default function StreaksPage() {
         <CardHeader>
           <CardTitle>Available Campaigns</CardTitle>
           <CardDescription>
-            Select a campaign to view your streak progress and submit participations
+            Select a campaign to view your streak progress and submit
+            participations
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -98,8 +108,8 @@ export default function StreaksPage() {
                         campaign.status === "active"
                           ? "default"
                           : campaign.status === "upcoming"
-                          ? "secondary"
-                          : "outline"
+                            ? "secondary"
+                            : "outline"
                       }
                     >
                       {campaign.status}
@@ -113,7 +123,9 @@ export default function StreaksPage() {
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex justify-between">
                       <span>Participants:</span>
-                      <span className="font-medium">{campaign.participants}</span>
+                      <span className="font-medium">
+                        {campaign.participants}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Start:</span>
@@ -134,7 +146,7 @@ export default function StreaksPage() {
       {/* Streak Dashboard */}
       <StreakDashboard
         campaignId={selectedCampaign}
-        campaignName={campaigns.find(c => c.id === selectedCampaign)?.name}
+        campaignName={campaigns.find((c) => c.id === selectedCampaign)?.name}
       />
 
       {/* Information Cards */}
@@ -150,13 +162,15 @@ export default function StreaksPage() {
             <div className="space-y-2">
               <h4 className="font-medium">1. Choose Your Chain</h4>
               <p className="text-sm text-muted-foreground">
-                Select from Base, Ethereum, or Arbitrum for your streak verification.
+                Select from Base, Ethereum, or Arbitrum for your streak
+                verification.
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">2. Submit Content</h4>
               <p className="text-sm text-muted-foreground">
-                Upload your streak content with a title and optional description.
+                Upload your streak content with a title and optional
+                description.
               </p>
             </div>
             <div className="space-y-2">
@@ -211,5 +225,3 @@ export default function StreaksPage() {
     </div>
   );
 }
-
-
