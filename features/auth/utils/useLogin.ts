@@ -9,6 +9,7 @@ import { defaultRedirectUrl } from "@/data/routes.data";
 import { DOMAIN } from "@/constants";
 import { StatusAPIResponse } from "@farcaster/auth-client";
 import { toast } from "sonner";
+import { getUserByAddressAction } from "@/features/account/actions/getUserByAddress.action";
 
 export default function useLogin() {
   const [isFetching, setIsFetching] = useState(false);
@@ -65,6 +66,22 @@ export default function useLogin() {
 
           if (!fid) {
             setIsError("FID not found in message");
+            setIsFetching(false);
+            return;
+          }
+
+          const {
+            user: { fid: userFid },
+          } = await response.json();
+
+          if (userFid !== fid) {
+            toast.error(
+              "Account mismatch. Use the same Farcaster and wallet accounts as before.",
+            );
+            setIsError(
+              "Account mismatch. Use the same Farcaster and wallet accounts as before.",
+            );
+
             setIsFetching(false);
             return;
           }
@@ -183,6 +200,22 @@ export default function useLogin() {
         if (!fid) {
           toast.error("FID not found in message");
           setIsError("FID not found in message");
+          setIsFetching(false);
+          return;
+        }
+
+        const {
+          user: { fid: userFid },
+        } = await response.json();
+
+        if (userFid !== fid) {
+          toast.error(
+            "Account mismatch. Use the same Farcaster and wallet accounts as before.",
+          );
+          setIsError(
+            "Account mismatch. Use the same Farcaster and wallet accounts as before.",
+          );
+
           setIsFetching(false);
           return;
         }
