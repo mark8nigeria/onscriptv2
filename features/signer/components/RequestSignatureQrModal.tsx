@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Plus } from "lucide-react";
+import { Copy } from "lucide-react";
 import React from "react";
 import {
   AlertDialog,
@@ -8,7 +8,6 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import ButtonAction from "@/components/ButtonAction";
 import QRCode from "react-qr-code";

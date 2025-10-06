@@ -18,12 +18,14 @@ import { cn } from "@/lib/utils";
 import ButtonAction from "@/components/ButtonAction";
 import Loader from "@/components/Loader";
 import useLogin from "@/features/auth/utils/useLogin";
+import SignInOnBrowsers from "./SignInOnBrowsers";
 
 export default function Login() {
   const {
     isError,
     isFetching,
     handleSignIn,
+    handleBrowserSignIn,
     // mockSignIn
   } = useLogin();
   const { address } = useAccount();
@@ -55,15 +57,25 @@ export default function Login() {
           </Wallet>
 
           {address && (
-            <ButtonAction
-              disabled={!address}
-              // onClick={mockSignIn}
-              onClick={handleSignIn}
-              btnType="primary"
-              className={cn("w-full", { hidden: !address })}
-            >
-              Login with Farcaster
-            </ButtonAction>
+            <div className="w-full grid grid-cols-1 gap-4">
+              <ButtonAction
+                disabled={!address}
+                onClick={handleSignIn}
+                btnType="primary"
+                className={cn("w-full", { hidden: !address })}
+              >
+                Login with Farcaster
+              </ButtonAction>
+
+              <div>
+                <p className="text-[10px] text-muted-foreground text-center">
+                  Using the app outside Farcaster or Base? <br /> Sign in below
+                  instead.
+                </p>
+              </div>
+
+              <SignInOnBrowsers handleBrowserSignIn={handleBrowserSignIn} />
+            </div>
           )}
         </div>
       </div>

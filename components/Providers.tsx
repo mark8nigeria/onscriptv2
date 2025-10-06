@@ -20,6 +20,7 @@ import Loader from "./Loader";
 import { getUserByIdAction } from "@/features/account/actions/getUserById.action";
 import { usePathname } from "next/navigation";
 import { hideLoaderRoute } from "@/data/routes.data";
+import { AuthKitProvider } from "@farcaster/auth-kit";
 
 export default function Providers(props: { children: ReactNode }) {
   useEffect(() => {
@@ -45,7 +46,9 @@ export default function Providers(props: { children: ReactNode }) {
       <WagmiProvider config={wagmiConfig}>
         <Provider store={store}>
           <SessionProvider>
-            <InitUserInfoProvider>{props.children}</InitUserInfoProvider>
+            <InitUserInfoProvider>
+              <AuthKitProvider config={{}}>{props.children}</AuthKitProvider>
+            </InitUserInfoProvider>
           </SessionProvider>
         </Provider>
       </WagmiProvider>
