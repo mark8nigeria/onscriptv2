@@ -38,7 +38,9 @@ export default function CastPreview(props: CastPreviewProps) {
         <div className="flex items-start justify-start gap-2 flex-col w-full">
           <div>
             <p className="font-medium">{username}</p>
-            <p>{text}</p>
+            <pre className="text-black font-poppins whitespace-pre-wrap text-xs">
+              {text}
+            </pre>
           </div>
 
           <CastCardEmbeds embeds={embeds} />
